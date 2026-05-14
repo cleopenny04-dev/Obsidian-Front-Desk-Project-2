@@ -1,0 +1,1460 @@
+bash
+
+python3 << 'PYEOF'
+import base64
+
+with open('/mnt/user-data/uploads/Obsidian_Logo-05.png', 'rb') as f:
+    LOGO = base64.b64encode(f.read()).decode('utf-8')
+
+HTML = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBSIDIAN — Front Desk Case Module</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px;background:#f4f4f2;color:#1a1a1a;}
+
+/* ---- SIDEBAR ---- */
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:240px;flex-shrink:0;background:#111;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;transition:transform .25s;}
+.sidebar-logo{padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1);}
+.sidebar-logo img{width:80px;filter:invert(1);opacity:.9;}
+.sidebar-tagline{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:6px;}
+.sb-section{padding:14px 12px 4px;font-size:9px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;}
+.sb-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:1px 6px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,.65);font-size:12px;transition:all .15s;border:none;background:none;font-family:inherit;width:calc(100% - 12px);text-align:left;}
+.sb-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sb-btn.active{background:rgba(255,255,255,.14);color:#fff;font-weight:500;}
+.sb-btn .ic{width:16px;text-align:center;flex-shrink:0;}
+.sb-divider{border:none;border-top:1px solid rgba(255,255,255,.08);margin:6px 0;}
+.sidebar-footer{margin-top:auto;padding:14px 12px;border-top:1px solid rgba(255,255,255,.1);}
+.pill{display:inline-block;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;margin:2px 2px 2px 0;letter-spacing:.04em;}
+.pill-bk{background:#000;color:#fff;border:1px solid rgba(255,255,255,.2);}
+.pill-rd{background:#8B1A1A;color:#fff;}
+.pill-gy{background:#333;color:#fff;}
+
+/* ---- MOBILE HEADER ---- */
+.mob-header{display:none;align-items:center;justify-content:space-between;background:#111;padding:12px 16px;position:sticky;top:0;z-index:99;}
+.mob-logo{height:22px;filter:invert(1);opacity:.9;}
+.mob-menu-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 6px;}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;}
+
+/* ---- MAIN ---- */
+.main{margin-left:240px;flex:1;padding:28px 28px 60px;max-width:900px;}
+
+/* ---- LANG BAR ---- */
+.lang-bar{display:flex;align-items:center;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+.lang-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:1.5px solid #ccc;background:#fff;cursor:pointer;transition:all .15s;font-family:inherit;}
+.lang-btn.active{background:#111;color:#fff;border-color:#111;}
+.lang-btn:hover:not(.active){background:#f0f0f0;}
+.side-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:1.5px solid #111;background:#fff;cursor:pointer;transition:all .15s;font-family:inherit;margin-left:4px;}
+.side-btn.active{background:#111;color:#fff;}
+
+/* ---- VIEWS ---- */
+.view{display:none;}.view.active{display:block;}
+
+/* ---- BILINGUAL ---- */
+.bilingual .en-text,.bilingual .id-text{display:block;}
+.bilingual .en-text{padding-bottom:6px;margin-bottom:6px;border-bottom:1px dashed #e0e0e0;}
+.en-only .en-text{display:block;}.en-only .id-text{display:none;}
+.id-only .id-text{display:block;}.id-only .en-text{display:none;}
+
+/* ---- PAGE TITLE ---- */
+.page-title{font-size:20px;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:12px;color:#777;margin-bottom:22px;}
+
+/* ---- PRINCIPLE CARDS ---- */
+.pc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px;}
+.pc{border-radius:10px;padding:18px;text-align:center;}
+.pc-bk{background:#111;color:#fff;}.pc-rd{background:#8B1A1A;color:#fff;}.pc-wh{background:#fff;border:1px solid #e5e5e5;}
+.pc-eye{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.45;margin-bottom:8px;}
+.pc-wh .pc-eye{opacity:.6;color:#555;}
+.pc-title{font-size:13px;font-weight:700;line-height:1.4;margin-bottom:6px;}
+.pc-wh .pc-title{color:#111;}
+.pc-sub{font-size:11px;line-height:1.5;opacity:.6;}
+.pc-wh .pc-sub{opacity:1;color:#666;}
+.pc-tag{font-size:9px;font-weight:700;margin-top:10px;padding:3px 10px;border-radius:20px;display:inline-block;background:rgba(255,255,255,.15);letter-spacing:.04em;}
+.pc-wh .pc-tag{background:#f0f0f0;color:#555;}
+
+/* ---- CAT GRID ---- */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.cat-card{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;}
+.cat-card:hover{border-color:#aaa;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.cat-icon{font-size:22px;margin-bottom:8px;}
+.cat-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+.cat-sub{font-size:11px;color:#888;line-height:1.4;}
+.cat-count{font-size:10px;color:#bbb;margin-top:8px;font-weight:600;}
+
+/* ---- CASE LIST ---- */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#555;cursor:pointer;padding:6px 12px;border:1px solid #ddd;border-radius:6px;background:#fff;transition:all .15s;font-family:inherit;margin-bottom:16px;}
+.back-btn:hover{background:#f5f5f3;color:#111;}
+.sec-title{font-size:17px;font-weight:700;margin-bottom:14px;}
+.case-list{display:grid;gap:7px;}
+.case-item{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:13px 15px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s;}
+.case-item:hover{border-color:#aaa;background:#fafaf8;}
+.ci-title{font-size:12px;font-weight:600;margin-bottom:2px;}
+.ci-sub{font-size:11px;color:#888;}
+.ci-right{display:flex;align-items:center;gap:7px;flex-shrink:0;margin-left:10px;}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.b-red{background:#FEE2E2;color:#991B1B;}.b-amb{background:#FEF3C7;color:#92400E;}.b-gry{background:#F3F4F6;color:#6B7280;}
+.chevron-ic{color:#ccc;font-size:20px;line-height:1;}
+
+/* ---- DETAIL ---- */
+.detail-wrap{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:20px;}
+.detail-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+.detail-meta{font-size:11px;color:#888;margin-bottom:12px;}
+.detail-badges{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+.pr-banner{border-radius:8px;padding:13px 15px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.pr-bk{background:#111;}.pr-rd{background:#8B1A1A;}.pr-wh{background:#fff;border:1px solid #e5e5e5;}
+.pr-label{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px;}
+.pr-bk .pr-label,.pr-rd .pr-label{color:rgba(255,255,255,.45);}
+.pr-wh .pr-label{color:#888;}
+.pr-title{font-size:13px;font-weight:700;}
+.pr-bk .pr-title,.pr-rd .pr-title{color:#fff;}
+.pr-wh .pr-title{color:#111;}
+.policy-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:11px 13px;font-size:12px;color:#1E40AF;line-height:1.6;margin-bottom:16px;}
+.policy-box strong{font-weight:700;}
+.scenario-box{background:#F9FAFB;border-left:3px solid #D1D5DB;padding:11px 13px;font-size:12px;color:#555;line-height:1.6;margin-bottom:16px;}
+
+/* ---- PHASE TABS ---- */
+.phase-tabs{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid #e5e5e5;}
+.phase-tab{padding:7px 15px;cursor:pointer;font-size:12px;font-weight:600;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;}
+.phase-tab:hover{color:#333;}
+.phase-tab.active{color:#111;border-bottom-color:#111;}
+.ph-content{display:none;}.ph-content.active{display:block;}
+
+/* ---- STEPS ---- */
+.step-row{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+.step-row:last-child{border-bottom:none;}
+.step-num{width:24px;height:24px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#555;flex-shrink:0;margin-top:1px;}
+.step-action{font-size:12px;font-weight:700;color:#111;margin-bottom:3px;}
+.step-say{font-size:12px;color:#555;line-height:1.55;font-style:italic;}
+.step-say strong{font-style:normal;color:#111;}
+.step-say .id-text{color:#666;}
+
+/* ---- ESCALATE / DO DONT ---- */
+.esc-box{background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:11px 13px;font-size:12px;color:#92400E;line-height:1.6;margin:14px 0;}
+.esc-box strong{font-weight:700;}
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.do-box{background:#F0FDF4;border-radius:8px;padding:13px;}
+.dont-box{background:#FEF2F2;border-radius:8px;padding:13px;}
+.dd-label{font-size:10px;font-weight:800;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em;}
+.do-box .dd-label{color:#15803D;}.dont-box .dd-label{color:#B91C1C;}
+.dl,.dontl{list-style:none;padding:0;}
+.dl li,.dontl li{font-size:11px;line-height:1.5;padding:2px 0 2px 15px;position:relative;}
+.dl li{color:#166534;}.dl li::before{content:"✓";position:absolute;left:0;font-weight:700;}
+.dontl li{color:#991B1B;}.dontl li::before{content:"✕";position:absolute;left:0;font-weight:700;}
+
+/* ---- ACCEL ---- */
+.accel-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start;}
+.accel-row:last-child{border-bottom:none;}
+.accel-l{width:30px;height:30px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.accel-word{font-size:13px;font-weight:700;margin-bottom:2px;}
+.accel-desc{font-size:12px;color:#666;line-height:1.5;}
+
+/* ---- HANDBOOK ---- */
+.hb-section{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:18px;margin-bottom:12px;}
+.hb-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.hb-title .ic{font-size:16px;}
+.hb-item{font-size:12px;color:#444;line-height:1.6;padding:5px 0;border-bottom:1px solid #f5f5f5;}
+.hb-item:last-child{border-bottom:none;}
+.hb-item strong{color:#111;font-weight:600;}
+.hb-red{color:#8B1A1A;font-weight:700;}
+.hb-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+.hb-tag-red{background:#FEE2E2;color:#991B1B;}
+.hb-tag-amb{background:#FEF3C7;color:#92400E;}
+
+/* ---- SECTION CARD ---- */
+.sec-card{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:18px;margin-bottom:12px;}
+.sec-card-title{font-size:14px;font-weight:700;margin-bottom:12px;}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .mob-header{display:flex;}
+  .mob-overlay.open{display:block;}
+  .main{margin-left:0;padding:16px 14px 60px;}
+  .pc-grid{grid-template-columns:1fr;}
+  .cat-grid{grid-template-columns:1fr 1fr;}
+  .do-dont{grid-template-columns:1fr;}
+  .lang-bar{gap:5px;}
+  .phase-tab{padding:7px 10px;font-size:11px;}
+}
+@media(max-width:420px){
+  .cat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE HEADER -->
+<div class="mob-header">
+  <img class="mob-logo" src="data:image/png;base64,''' + LOGO + '''" alt="Obsidian">
+  <button class="mob-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
+</div>
+<div class="mob-overlay" id="mob-overlay" onclick="toggleMobileMenu()"></div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="data:image/png;base64,''' + LOGO + '''" alt="Obsidian Logo">
+    <div class="sidebar-tagline">Front Desk Module</div>
+  </div>
+
+  <div class="sb-section">Overview</div>
+  <button class="sb-btn active" onclick="showView(\'home\',this)"><span class="ic">⊞</span> All Categories</button>
+  <button class="sb-btn" onclick="showView(\'principles\',this)"><span class="ic">◈</span> Obsidian Principles</button>
+  <button class="sb-btn" onclick="showView(\'accel\',this)"><span class="ic">◎</span> ACCEL Method</button>
+  <button class="sb-btn" onclick="showView(\'handbook\',this)"><span class="ic">📖</span> Employee Handbook</button>
+
+  <hr class="sb-divider">
+  <div class="sb-section">Case Categories</div>
+  <button class="sb-btn" onclick="openCat(\'policy\',this)"><span class="ic">📋</span> Policy & Membership</button>
+  <button class="sb-btn" onclick="openCat(\'facility\',this)"><span class="ic">🏢</span> Facility & Environment</button>
+  <button class="sb-btn" onclick="openCat(\'conduct\',this)"><span class="ic">👥</span> Member Conduct</button>
+  <button class="sb-btn" onclick="openCat(\'safety\',this)"><span class="ic">🛡️</span> Safety & Security</button>
+  <button class="sb-btn" onclick="openCat(\'health\',this)"><span class="ic">⚕️</span> Health & Incidents</button>
+  <button class="sb-btn" onclick="openCat(\'conflict\',this)"><span class="ic">⚡</span> Conflict & Aggression</button>
+
+  <div class="sidebar-footer">
+    <div style="font-size:9px;color:rgba(255,255,255,.3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">Principles</div>
+    <span class="pill pill-bk">Zero Downtime</span>
+    <span class="pill pill-rd">Rules</span>
+    <span class="pill pill-gy">Accountability</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LANG BAR (shown on all views) -->
+  <div class="lang-bar" id="lang-bar">
+    <span style="font-size:11px;color:#888;font-weight:600;">Language:</span>
+    <button class="lang-btn active" onclick="setLang(\'en\',this)">English</button>
+    <button class="lang-btn" onclick="setLang(\'id\',this)">Indonesia</button>
+    <button class="side-btn" id="side-btn" onclick="toggleSide()">EN | ID Side by Side</button>
+  </div>
+
+  <!-- ===== HOME ===== -->
+  <div id="view-home" class="view active">
+    <div class="page-title"><span class="en-text">Front Desk Case Module</span><span class="id-text">Modul Penanganan Kasus Front Desk</span></div>
+    <div class="page-sub"><span class="en-text">Select a category or case to view the full prevention, handling, and resolution flow.</span><span class="id-text">Pilih kategori atau kasus untuk melihat alur lengkap pencegahan, penanganan, dan resolusi.</span></div>
+
+    <div class="pc-grid">
+      <div class="pc pc-bk">
+        <div class="pc-eye">Zero Downtime</div>
+        <div class="pc-title"><span class="en-text">Things can break. Service must not.</span><span class="id-text">Fasilitas bisa rusak. Layanan tidak boleh.</span></div>
+        <div class="pc-sub"><span class="en-text">Facility failures are expected. A broken member experience is never acceptable.</span><span class="id-text">Kerusakan fasilitas adalah hal wajar. Pengalaman member yang rusak tidak pernah bisa diterima.</span></div>
+        <div class="pc-tag"><span class="en-text">Prevention</span><span class="id-text">Pencegahan</span></div>
+      </div>
+      <div class="pc pc-rd">
+        <div class="pc-eye">Rules</div>
+        <div class="pc-title"><span class="en-text">No waiting. No confusion. No excuses.</span><span class="id-text">Tidak ada menunggu. Tidak ada kebingungan. Tidak ada alasan.</span></div>
+        <div class="pc-sub"><span class="en-text">If members feel disruption — you failed. Own it and fix it immediately.</span><span class="id-text">Jika member merasakan gangguan — kamu gagal. Ambil tanggung jawab dan perbaiki sekarang.</span></div>
+        <div class="pc-tag"><span class="en-text">Handling</span><span class="id-text">Penanganan</span></div>
+      </div>
+      <div class="pc pc-wh">
+        <div class="pc-eye" style="color:#555;">Accountability</div>
+        <div class="pc-title"><span class="en-text">This is not motivation. This is accountability.</span><span class="id-text">Ini bukan motivasi. Ini adalah akuntabilitas.</span></div>
+        <div class="pc-sub"><span class="en-text">Broken equipment is normal. A broken experience is incompetence.</span><span class="id-text">Alat rusak itu normal. Pengalaman yang rusak adalah ketidakmampuan.</span></div>
+        <div class="pc-tag"><span class="en-text">Resolution</span><span class="id-text">Resolusi</span></div>
+      </div>
+    </div>
+
+    <div class="cat-grid">
+      <div class="cat-card" onclick="openCat(\'policy\',null)">
+        <div class="cat-icon">📋</div>
+        <div class="cat-title"><span class="en-text">Policy & Membership</span><span class="id-text">Kebijakan & Keanggotaan</span></div>
+        <div class="cat-sub"><span class="en-text">Freeze, refunds, last day, force majeure</span><span class="id-text">Freeze, refund, hari terakhir, force majeure</span></div>
+        <div class="cat-count">4 cases</div>
+      </div>
+      <div class="cat-card" onclick="openCat(\'facility\',null)">
+        <div class="cat-icon">🏢</div>
+        <div class="cat-title"><span class="en-text">Facility & Environment</span><span class="id-text">Fasilitas & Lingkungan</span></div>
+        <div class="cat-sub"><span class="en-text">AC, crowding, parking, lost items</span><span class="id-text">AC, kepadatan, parkir, barang hilang</span></div>
+        <div class="cat-count">4 cases</div>
+      </div>
+      <div class="cat-card" onclick="openCat(\'conduct\',null)">
+        <div class="cat-icon">👥</div>
+        <div class="cat-title"><span class="en-text">Member Conduct</span><span class="id-text">Perilaku Member</span></div>
+        <div class="cat-sub"><span class="en-text">Dress code, dogs, odour, disruptive members</span><span class="id-text">Kode berpakaian, anjing, bau badan, member mengganggu</span></div>
+        <div class="cat-count">4 cases</div>
+      </div>
+      <div class="cat-card" onclick="openCat(\'safety\',null)">
+        <div class="cat-icon">🛡️</div>
+        <div class="cat-title"><span class="en-text">Safety & Security</span><span class="id-text">Keamanan & Perlindungan</span></div>
+        <div class="cat-sub"><span class="en-text">Harassment, stalking, stolen items, CCTV</span><span class="id-text">Pelecehan, stalking, barang dicuri, CCTV</span></div>
+        <div class="cat-count">4 cases</div>
+      </div>
+      <div class="cat-card" onclick="openCat(\'health\',null)">
+        <div class="cat-icon">⚕️</div>
+        <div class="cat-title"><span class="en-text">Health & Incidents</span><span class="id-text">Kesehatan & Insiden</span></div>
+        <div class="cat-sub"><span class="en-text">Food poisoning, injury, medical situations</span><span class="id-text">Keracunan makanan, cedera, situasi medis</span></div>
+        <div class="cat-count">2 cases</div>
+      </div>
+      <div class="cat-card" onclick="openCat(\'conflict\',null)">
+        <div class="cat-icon">⚡</div>
+        <div class="cat-title"><span class="en-text">Conflict & Aggression</span><span class="id-text">Konflik & Agresi</span></div>
+        <div class="cat-sub"><span class="en-text">Angry members, inter-member disputes</span><span class="id-text">Member marah, perselisihan antar member</span></div>
+        <div class="cat-count">2 cases</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRINCIPLES ===== -->
+  <div id="view-principles" class="view">
+    <div class="page-title"><span class="en-text">Obsidian Principles</span><span class="id-text">Prinsip Obsidian</span></div>
+    <div class="page-sub"><span class="en-text">Every case maps to one of three principles. Know which one applies.</span><span class="id-text">Setiap kasus mengacu pada salah satu dari tiga prinsip. Ketahui mana yang berlaku.</span></div>
+    <div class="pc-grid" style="margin-bottom:18px">
+      <div class="pc pc-bk">
+        <div class="pc-eye">Zero Downtime</div>
+        <div class="pc-title"><span class="en-text">Things can break. Service must not.</span><span class="id-text">Fasilitas bisa rusak. Layanan tidak boleh.</span></div>
+        <div class="pc-sub"><span class="en-text">AC, equipment, injuries, crowding. Physical failures happen — service failure is a choice.</span><span class="id-text">AC, alat, cedera, kepadatan. Kegagalan fisik terjadi — kegagalan layanan adalah pilihan.</span></div>
+        <div class="pc-tag"><span class="en-text">Prevention focus</span><span class="id-text">Fokus pencegahan</span></div>
+      </div>
+      <div class="pc pc-rd">
+        <div class="pc-eye">Rules</div>
+        <div class="pc-title"><span class="en-text">No waiting. No confusion. No excuses.</span><span class="id-text">Tidak ada menunggu. Tidak ada kebingungan. Tidak ada alasan.</span></div>
+        <div class="pc-sub"><span class="en-text">Conduct, conflict, policy, harassment. If a member feels disruption — you failed.</span><span class="id-text">Perilaku, konflik, kebijakan, pelecehan. Jika member merasakan gangguan — kamu gagal.</span></div>
+        <div class="pc-tag"><span class="en-text">Handling focus</span><span class="id-text">Fokus penanganan</span></div>
+      </div>
+      <div class="pc pc-wh">
+        <div class="pc-eye" style="color:#555;">Accountability</div>
+        <div class="pc-title"><span class="en-text">This is not motivation. This is accountability.</span><span class="id-text">Ini bukan motivasi. Ini adalah akuntabilitas.</span></div>
+        <div class="pc-sub"><span class="en-text">Lost items, CCTV, parking, membership confusion. Document, follow up, close the loop.</span><span class="id-text">Barang hilang, CCTV, parkir, kebingungan keanggotaan. Dokumentasi, tindak lanjut, selesaikan.</span></div>
+        <div class="pc-tag"><span class="en-text">Resolution focus</span><span class="id-text">Fokus resolusi</span></div>
+      </div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-card-title"><span class="en-text">How the three principles connect to every case</span><span class="id-text">Bagaimana tiga prinsip terhubung ke setiap kasus</span></div>
+      <div class="step-row"><div class="step-num" style="background:#111;color:#fff;">1</div><div><div class="step-action"><span class="en-text">Prevention → Zero Downtime</span><span class="id-text">Pencegahan → Zero Downtime</span></div><div class="step-say"><span class="en-text">Catch every issue before the member does. A morning walkthrough that finds a broken machine means no one complains about it later.</span><span class="id-text">Tangkap setiap masalah sebelum member menemukannya. Pemeriksaan pagi yang menemukan mesin rusak berarti tidak ada yang akan mengeluh nanti.</span></div></div></div>
+      <div class="step-row"><div class="step-num" style="background:#8B1A1A;color:#fff;">2</div><div><div class="step-action"><span class="en-text">Handling → Rules</span><span class="id-text">Penanganan → Rules</span></div><div class="step-say"><span class="en-text">When something happens — move fast, speak clearly, take ownership. No waiting. No confusion. No excuses.</span><span class="id-text">Ketika sesuatu terjadi — bergerak cepat, bicara jelas, ambil tanggung jawab. Tidak ada menunggu. Tidak ada kebingungan. Tidak ada alasan.</span></div></div></div>
+      <div class="step-row"><div class="step-num">3</div><div><div class="step-action"><span class="en-text">Resolution → Accountability</span><span class="id-text">Resolusi → Akuntabilitas</span></div><div class="step-say"><span class="en-text">Close every case. Log it. Follow up with the member. The case is not resolved until the member confirms it is.</span><span class="id-text">Tutup setiap kasus. Catat. Tindak lanjuti dengan member. Kasus belum selesai sampai member mengkonfirmasinya.</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- ===== ACCEL ===== -->
+  <div id="view-accel" class="view">
+    <div class="page-title">ACCEL Method</div>
+    <div class="page-sub"><span class="en-text">Use this on every case, every time — regardless of category or urgency.</span><span class="id-text">Gunakan ini di setiap kasus, setiap saat — terlepas dari kategori atau tingkat urgensi.</span></div>
+    <div class="sec-card" style="margin-bottom:14px">
+      <div class="sec-card-title"><span class="en-text">ACCEL — the 5-step approach</span><span class="id-text">ACCEL — pendekatan 5 langkah</span></div>
+      <div class="accel-row"><div class="accel-l">A</div><div><div class="accel-word"><span class="en-text">Acknowledge</span><span class="id-text">Akui</span></div><div class="accel-desc"><span class="en-text">Recognise the member's feeling before anything else. Never jump to solutions first. A person who doesn't feel heard will not accept your resolution.</span><span class="id-text">Akui perasaan member sebelum segalanya. Jangan langsung ke solusi. Orang yang merasa tidak didengar tidak akan menerima resolusimu.</span></div></div></div>
+      <div class="accel-row"><div class="accel-l">C</div><div><div class="accel-word"><span class="en-text">Clarify</span><span class="id-text">Klarifikasi</span></div><div class="accel-desc"><span class="en-text">Ask one focused question to fully understand the situation before responding. Don't assume — confirm.</span><span class="id-text">Ajukan satu pertanyaan terfokus untuk memahami situasi sepenuhnya sebelum merespons. Jangan berasumsi — konfirmasi.</span></div></div></div>
+      <div class="accel-row"><div class="accel-l">C</div><div><div class="accel-word"><span class="en-text">Confirm</span><span class="id-text">Konfirmasi</span></div><div class="accel-desc"><span class="en-text">Repeat back what you've understood — "So what I'm hearing is..." This prevents mishandling and shows you were listening.</span><span class="id-text">Ulangi apa yang kamu pahami — "Jadi yang saya dengar adalah..." Ini mencegah kesalahan penanganan dan menunjukkan kamu mendengarkan.</span></div></div></div>
+      <div class="accel-row"><div class="accel-l">E</div><div><div class="accel-word"><span class="en-text">Execute or Escalate</span><span class="id-text">Eksekusi atau Eskalasi</span></div><div class="accel-desc"><span class="en-text">Resolve it yourself if within your authority — or escalate immediately with full context. Never sit on a case.</span><span class="id-text">Selesaikan sendiri jika dalam kewenanganmu — atau eskalasi segera dengan konteks lengkap. Jangan biarkan kasus terbengkalai.</span></div></div></div>
+      <div class="accel-row"><div class="accel-l">L</div><div><div class="accel-word"><span class="en-text">Log</span><span class="id-text">Catat</span></div><div class="accel-desc"><span class="en-text">Every case — small or large — gets a note before your shift ends. Date, issue, action taken, outcome.</span><span class="id-text">Setiap kasus — kecil atau besar — harus dicatat sebelum shift berakhir. Tanggal, masalah, tindakan, hasil.</span></div></div></div>
+    </div>
+    <div class="do-dont">
+      <div class="do-box"><div class="dd-label"><span class="en-text">Always</span><span class="id-text">Selalu</span></div><ul class="dl"><li><span class="en-text">Use their name if you know it</span><span class="id-text">Gunakan nama mereka jika kamu tahu</span></li><li><span class="en-text">Acknowledge before explaining policy</span><span class="id-text">Akui dulu sebelum menjelaskan kebijakan</span></li><li><span class="en-text">Offer a next step in every interaction</span><span class="id-text">Tawarkan langkah berikutnya di setiap interaksi</span></li><li><span class="en-text">Log before your shift ends</span><span class="id-text">Catat sebelum shift berakhir</span></li><li><span class="en-text">Follow up to close the loop</span><span class="id-text">Tindak lanjuti untuk menutup kasus</span></li><li><span class="en-text">Thank them for raising it</span><span class="id-text">Terima kasih karena telah menyampaikannya</span></li></ul></div>
+      <div class="dont-box"><div class="dd-label"><span class="en-text">Never</span><span class="id-text">Jangan Pernah</span></div><ul class="dontl"><li><span class="en-text">Argue while they're emotional</span><span class="id-text">Berdebat saat mereka emosional</span></li><li><span class="en-text">Promise what you can't deliver</span><span class="id-text">Menjanjikan sesuatu yang tidak bisa kamu penuhi</span></li><li><span class="en-text">Approve refunds without manager</span><span class="id-text">Menyetujui refund tanpa manager</span></li><li><span class="en-text">Discuss staff conduct on the floor</span><span class="id-text">Membahas perilaku staf di lantai gym</span></li><li><span class="en-text">Dismiss anything as minor</span><span class="id-text">Menganggap sesuatu tidak penting</span></li><li><span class="en-text">Leave a case unlogged</span><span class="id-text">Membiarkan kasus tidak tercatat</span></li></ul></div>
+    </div>
+  </div>
+
+  <!-- ===== HANDBOOK ===== -->
+  <div id="view-handbook" class="view">
+    <div class="page-title"><span class="en-text">Employee Handbook</span><span class="id-text">Buku Panduan Karyawan</span></div>
+    <div class="page-sub"><span class="en-text">Key policies and standards from the Obsidian Employee Handbook for staff reference.</span><span class="id-text">Kebijakan dan standar utama dari Buku Panduan Karyawan Obsidian sebagai referensi staf.</span></div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">⚡</span><span class="en-text">Our Way of Work</span><span class="id-text">Cara Kerja Kami</span></div>
+      <div class="hb-item"><strong>Zero Downtime:</strong> <span class="en-text">Facility or equipment issues are normal — but member experience and service must never be disrupted. This is about the speed and precision of our response time. Within 10 minutes of an incident, staff must have instructions on what to say to members.</span><span class="id-text">Masalah fasilitas atau peralatan adalah hal wajar — namun pengalaman dan layanan member tidak boleh terganggu. Ini tentang kecepatan dan ketepatan response time kita. Maksimal 10 menit setelah insiden, harus sudah ada instruksi apa yang harus disampaikan kepada member.</span></div>
+      <div class="hb-item"><strong>Rules:</strong> <span class="en-text">No waiting. No confusion. No excuses. All staff must respond with consistency and must never look confused in front of members.</span><span class="id-text">Tidak ada menunggu. Tidak ada kebingungan. Tidak ada alasan. Semua staf harus menjawab dengan seragam dan tidak boleh terlihat bingung di depan member.</span></div>
+      <div class="hb-item"><strong>Accountability:</strong> <span class="en-text">This is not motivation — it is accountability. Broken equipment is normal. A broken experience is incompetence. The entire team is responsible.</span><span class="id-text">Ini bukan motivasi — ini adalah akuntabilitas. Alat rusak itu normal. Pengalaman yang rusak adalah ketidakmampuan. Seluruh tim bertanggung jawab.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">🧹</span><span class="en-text">Operations Standard</span><span class="id-text">Standar Operasional</span></div>
+      <div class="hb-item"><strong><span class="en-text">1. Clean (Bersih):</span><span class="id-text">1. Bersih:</span></strong> <span class="en-text">All areas must be free of trash and misplaced items. Cleanliness is everyone's responsibility — do not point fingers. If you see a dirty area, clean it without excuses.</span><span class="id-text">Seluruh area harus bersih dari sampah dan barang yang tidak pada tempatnya. Kebersihan adalah tanggung jawab bersama — dilarang saling tunjuk. Jika melihat area kotor, segera bersihkan tanpa banyak alasan.</span></div>
+      <div class="hb-item"><strong><span class="en-text">2. Safe & Functional:</span><span class="id-text">2. Aman & Berfungsi:</span></strong> <span class="en-text">All facilities, gym equipment, and public areas must always be functional and 100% safe for members and staff. Report any unsafe condition immediately.</span><span class="id-text">Seluruh fasilitas, alat gym, dan area publik harus selalu berfungsi dengan baik dan 100% aman untuk member maupun staf. Laporkan kondisi tidak aman segera.</span></div>
+      <div class="hb-item"><strong><span class="en-text">3. Neat & Consistent:</span><span class="id-text">3. Rapi & Seragam:</span></strong> <span class="en-text">Everything at Obsidian — back office and service areas — must always be neat and consistent with Obsidian aesthetic standards.</span><span class="id-text">Segala hal di Obsidian — back office maupun service area — harus selalu tertata rapi dan konsisten mengikuti standar estetika Obsidian.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">🕐</span><span class="en-text">Operational Hours & Employment</span><span class="id-text">Jam Operasional & Status Kerja</span></div>
+      <div class="hb-item"><strong>Obsidian Gym:</strong> 06.00 – 22.00 WITA</div>
+      <div class="hb-item"><strong>Obsidian Studio:</strong> 06.00 – 19.00 WITA</div>
+      <div class="hb-item"><span class="en-text"><strong>Probation:</strong> 3 months (performance & culture evaluation). After probation, staff may be elevated to permanent employee (PKWTT).</span><span class="id-text"><strong>Masa Percobaan:</strong> 3 bulan (evaluasi kinerja & keselarasan budaya). Setelah itu dapat diangkat menjadi Karyawan Tetap (PKWTT).</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Payroll:</strong> Paid on the 28th of every month. Probationary employees are paid from their join date.</span><span class="id-text"><strong>Penggajian:</strong> Dibayarkan pada tanggal 28 setiap bulan. Karyawan percobaan menyesuaikan dengan tanggal bergabung.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">✅</span><span class="en-text">Work Rules & Conduct Standards</span><span class="id-text">Aturan Kerja & Standar Sikap</span></div>
+      <div class="hb-item"><strong><span class="en-text">Compliance Bonus:</span><span class="id-text">Bonus Kepatuhan:</span></strong> <span class="en-text">Rp 350,000/person based on attendance percentage. 100% attendance = full bonus. Above 90% = 50% bonus. Below 90% = no bonus.</span><span class="id-text">Rp 350.000/orang berdasarkan persentase kehadiran. Kehadiran 100% = bonus penuh. Di atas 90% = 50% bonus. Di bawah 90% = tidak mendapat bonus.</span></div>
+      <div class="hb-item"><strong><span class="en-text">Attendance:</span><span class="id-text">Absensi:</span></strong> <span class="en-text">Must clock in at least 5 minutes before the shift starts. Clocking in exactly at shift start time is considered LATE.</span><span class="id-text">Wajib absen minimal 5 menit lebih awal sebelum shift dimulai. Absen tepat pada jam kerja dimulai dianggap TELAT.</span></div>
+      <div class="hb-item"><strong><span class="en-text">Uniform:</span><span class="id-text">Seragam:</span></strong> <span class="en-text">Full uniform required (top, bottom, shoes, headwear) — no flashy accessories or disruptive undergarments. Non-compliance immediately deducts compliance bonus.</span><span class="id-text">Wajib lengkap (atasan, bawahan, sepatu, HT) tanpa aksesoris mencolok. Ketidaklengkapan akan langsung memotong bonus compliance.</span></div>
+      <div class="hb-item"><strong class="hb-red"><span class="en-text">Member Facilities:</span><span class="id-text">Fasilitas Member:</span></strong> <span class="en-text">Staff are strictly prohibited from using member facilities (glasses, towels, toilets, lockers, etc.) without explicit approval from the Operational Manager. Violation = SP1 immediately.</span><span class="id-text">Karyawan dilarang keras menggunakan fasilitas member (gelas, handuk, toilet, loker, dll.) tanpa persetujuan Operational Manager. Pelanggaran = SP1 langsung.</span></div>
+      <div class="hb-item"><strong><span class="en-text">Obsidian Standard:</span><span class="id-text">Standar Obsidian:</span></strong> <span class="en-text">Give the "Obsidian Greeting" at the right moment. Always be situationally aware and polite when interacting with members. No slouching, appearing lazy, or excessive phone use in member areas.</span><span class="id-text">Berikan "Salam Obsidian" pada saat yang tepat. Selalu sadar situasi dan sopan saat berinteraksi dengan member. Dilarang slouching, terlihat malas, atau bermain HP berlebihan di area member.</span></div>
+      <div class="hb-item"><strong><span class="en-text">Gym Access:</span><span class="id-text">Akses Gym:</span></strong> <span class="en-text">Operational staff may use gym facilities for free, only outside their shift schedule and outside peak hours. Never use gym facilities while in uniform.</span><span class="id-text">Karyawan operasional diizinkan menggunakan fasilitas gym secara gratis hanya di luar jadwal shift dan di luar jam sibuk. Dilarang menggunakan fasilitas gym saat masih mengenakan seragam kerja.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">⚠️</span><span class="en-text">Disciplinary Actions</span><span class="id-text">Tindakan Disiplin</span></div>
+      <div class="hb-item"><span class="hb-tag hb-tag-amb">SP 1</span> <strong><span class="en-text">Basic Violations:</span><span class="id-text">Pelanggaran Dasar:</span></strong> <span class="en-text">Absent without valid reason, leaving work outside set hours, receiving non-work guests, work errors or not following SOP, violating appearance standards, smoking outside designated areas, spreading rumors or gossip, disrespecting clients or fellow employees.</span><span class="id-text">Tidak hadir tanpa keterangan sah, meninggalkan tempat kerja di luar jam kerja, menerima tamu tidak berkaitan pekerjaan, kesalahan kerja atau tidak mengikuti SOP, melanggar standar penampilan, merokok di luar area, menyebarkan gosip, menghina klien atau sesama karyawan.</span></div>
+      <div class="hb-item"><span class="hb-tag hb-tag-amb">SP 2</span> <strong><span class="en-text">Serious Violations:</span><span class="id-text">Pelanggaran Serius:</span></strong> <span class="en-text">Repeat basic violations, refusing company assignments, negative or disrespectful communication toward colleagues or the company, abusing company facilities, being 30+ minutes late without permission, damaging company assets.</span><span class="id-text">Pelanggaran dasar berulang, menolak penugasan perusahaan, komunikasi negatif terhadap rekan atau perusahaan, menyalahgunakan fasilitas perusahaan, terlambat 30+ menit tanpa izin, merusak aset perusahaan.</span></div>
+      <div class="hb-item"><span class="hb-tag hb-tag-red">SP 3 / PHK</span> <strong><span class="en-text">Severe Violations:</span><span class="id-text">Pelanggaran Berat:</span></strong> <span class="en-text">Providing false documents, actions against company core values, registering with competitors while employed, threatening or intimidating colleagues, immoral acts at the workplace, theft or fraud, intoxication or drug use at work, intentionally damaging company property.</span><span class="id-text">Memberikan dokumen palsu, tindakan bertentangan dengan nilai inti perusahaan, mendaftar ke kompetitor saat masih bekerja, mengancam atau mengintimidasi rekan, perbuatan asusila di tempat kerja, pencurian atau penipuan, mabuk atau penggunaan narkoba saat bekerja, merusak aset perusahaan dengan sengaja.</span></div>
+      <div class="hb-item"><span class="hb-tag hb-tag-red">SP 3 / PHK</span> <strong><span class="en-text">Most Severe Violations:</span><span class="id-text">Pelanggaran Sangat Berat:</span></strong> <span class="en-text">Leaking confidential company information, abusing company reputation, embezzlement or theft from the company or clients, running a competing business without approval, deliberately sabotaging company assets or operations.</span><span class="id-text">Membocorkan informasi rahasia perusahaan, menyalahgunakan nama baik perusahaan, penggelapan atau pencurian dari perusahaan atau klien, menjalankan bisnis pesaing tanpa persetujuan, sengaja menyabotase aset atau operasional perusahaan.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">📢</span><span class="en-text">Communication & Reporting</span><span class="id-text">Komunikasi & Pelaporan</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Leave & Permits:</strong> All leave requests must go through the Leader. Staff may communicate directly with HRD only for personal matters or cash advance requests.</span><span class="id-text"><strong>Cuti & Izin:</strong> Semua pengajuan cuti harus melalui Leader. Staf boleh berkomunikasi langsung dengan HRD hanya untuk urusan personal atau pengajuan kasbon.</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Shift Changes:</strong> Managed and fully approved by the Leader. Report to HRD afterward.</span><span class="id-text"><strong>Tukar Shift:</strong> Diatur dan disetujui sepenuhnya oleh Leader, lalu dilaporkan ke HRD.</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Reporting System:</strong> An anonymous form is available for anyone to report violations. Reports can include photos or specific timestamps for CCTV review. Non-compliance by a team is reflected directly in the Leader's performance evaluation.</span><span class="id-text"><strong>Sistem Pelaporan:</strong> Terdapat formulir anonim yang bisa diisi siapapun untuk mengadukan pelanggaran. Laporan bisa disertai foto atau waktu dan lokasi spesifik untuk dicek via CCTV. Kegagalan tim akan berdampak langsung ke penilaian Leader.</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Confidentiality:</strong> All internal company information is strictly confidential. Do not distribute company data, internal processes, or vendor/financial information without authorization. Maintain professionalism both in the workplace and on social media.</span><span class="id-text"><strong>Kerahasiaan:</strong> Semua informasi internal perusahaan diperlakukan sebagai rahasia mutlak. Dilarang mendistribusikan data perusahaan, proses internal, atau info vendor/keuangan tanpa otorisasi. Jaga profesionalisme di lingkungan kerja dan media sosial.</span></div>
+    </div>
+
+    <div class="hb-section">
+      <div class="hb-title"><span class="ic">🏢</span><span class="en-text">Team Structure</span><span class="id-text">Struktur Tim</span></div>
+      <div class="hb-item"><strong>Obsidian Gym:</strong> <span class="en-text">Office Team, Laundry Team, Linen Team, Security Team, Gym Attendant Team, Personal Trainer Team, Maintenance & Engineering Team, Front Office Team, Brand Ambassador Team, Merchandise Team.</span><span class="id-text">Office Team, Laundry Team, Linen Team, Security Team, Gym Attendant Team, Personal Trainer Team, Maintenance & Engineering Team, Front Office Team, Brand Ambassador Team, Merchandise Team.</span></div>
+      <div class="hb-item"><strong>Obsidian Studio:</strong> <span class="en-text">Office Team, Front Office Team, Gym Attendant Team.</span><span class="id-text">Office Team, Front Office Team, Gym Attendant Team.</span></div>
+      <div class="hb-item"><span class="en-text"><strong>Leader Responsibilities:</strong> Autonomy to manage schedules. Bridge between divisions — all problems must be raised in the ON DUTY WA Group mentioning the relevant division head. Responsible for ensuring all rules are understood by the team.</span><span class="id-text"><strong>Tanggung Jawab Leader:</strong> Kebebasan mengatur jadwal. Jembatan antar divisi — semua masalah harus didisounding di Grup WA ON DUTY dengan mention Kepala Divisi terkait. Bertanggung jawab memastikan semua aturan dipahami oleh tim.</span></div>
+    </div>
+  </div>
+
+  <!-- ===== CAT LIST ===== -->
+  <div id="view-catlist" class="view">
+    <button class="back-btn" onclick="showView(\'home\',null)">&#8592; <span class="en-text">All Categories</span><span class="id-text">Semua Kategori</span></button>
+    <div class="sec-title" id="catlist-title"></div>
+    <div class="case-list" id="case-list-container"></div>
+  </div>
+
+  <!-- ===== DETAIL ===== -->
+  <div id="view-detail" class="view">
+    <button class="back-btn" id="detail-back" onclick="goBackFromDetail()">&#8592; <span id="back-label-text">Back</span></button>
+    <div id="detail-body"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+var LANG = \'en\';
+var SIDE = false;
+var currentCat = null;
+
+var CATS = {
+  policy:{en:"Policy & Membership",id:"Kebijakan & Keanggotaan",cases:["freeze","refund","lastday","forcemajeure"]},
+  facility:{en:"Facility & Environment",id:"Fasilitas & Lingkungan",cases:["ac","crowding","parking","lostitems"]},
+  conduct:{en:"Member Conduct",id:"Perilaku Member",cases:["dresscode","dogs","odour","disruptive"]},
+  safety:{en:"Safety & Security",id:"Keamanan & Perlindungan",cases:["harassment","stolen","cctv","vulgar"]},
+  health:{en:"Health & Incidents",id:"Kesehatan & Insiden",cases:["food","injury"]},
+  conflict:{en:"Conflict & Aggression",id:"Konflik & Agresi",cases:["angry","intermember"]}
+};
+
+var PR = {
+  black:{en:"Zero Downtime — Things can break. Service must not.",id:"Zero Downtime — Fasilitas bisa rusak. Layanan tidak boleh.",cls:"pr-bk"},
+  red:{en:"Rules — No waiting. No confusion. No excuses.",id:"Rules — Tidak ada menunggu. Tidak ada kebingungan. Tidak ada alasan.",cls:"pr-rd"},
+  white:{en:"Accountability — Broken experience is incompetence.",id:"Akuntabilitas — Pengalaman yang rusak adalah ketidakmampuan.",cls:"pr-wh"}
+};
+
+var CASES = {
+freeze:{
+  en:{title:"Freeze Policy — Flexibility Requests",cat:"Policy & Membership",sub:"Member wants to freeze without pre-paying or retroactively",urgency:"medium",principle:"red",
+  scenario:"A member wants to freeze their membership but hasn\'t paid the freeze fee beforehand, or wants to apply a freeze retroactively after an absence.",
+  policy:"Memberships can be frozen with an additional payment. Payment must be completed beforehand — in person or via chat. Retroactive freezes are not permitted.",
+  prevent:[
+    {a:"Mention the freeze option proactively during the transaction",s:"When a member is signing up or making a payment, mention: \'Just so you know, if you ever need to pause your membership for travel or personal reasons, we do have a freeze option — it requires an additional fee paid beforehand.\'"},
+    {a:"Mention it proactively when relevant",s:"If a member mentions upcoming travel or surgery — bring it up before they leave: \'We do have a freeze option if you\'d like to hold your membership.\'"}
+  ],
+  handle:[
+    {a:"Acknowledge their situation first",s:"\\"I completely understand — let me pull up your account and walk you through what\'s possible.\\""},
+    {a:"Explain the policy clearly and warmly",s:"\\"Our freeze requires payment beforehand so the hold is formally processed. I\'m not able to apply it retroactively, but here\'s what I can do going forward...\\""},
+    {a:"Offer what is possible",s:"Offer a freeze starting today going forward. If the situation is exceptional — escalate to manager."},
+    {a:"Escalate genuine emergencies",s:"Medical, bereavement, or serious documented circumstances — escalate to manager before making any promise."}
+  ],
+  resolve:[
+    {a:"Confirm the freeze is processed",s:"Show them the new expiry date. Send a WhatsApp confirmation: \'Your freeze has been applied — new end date is [X].\'"},
+    {a:"Log the case",s:"Member name, membership type, freeze request date, outcome, any manager exceptions noted."},
+    {a:"Follow up if an exception was made",s:"Confirm in writing via WhatsApp so there is no confusion later."}
+  ],
+  escalate:"Any request citing medical or emergency reasons — escalate to manager before making any commitment.",
+  dos:["Mention the freeze option during sign-up and at the transaction","Be warm — travel and illness are real life situations","Escalate genuine emergencies rather than flat refusal"],
+  donts:["Apply retroactive freezes without manager approval","Make exceptions that contradict policy uninstructed","Leave the member with no next step"]},
+  id:{title:"Kebijakan Freeze — Permintaan Fleksibilitas",cat:"Kebijakan & Keanggotaan",sub:"Member ingin freeze tanpa bayar di depan atau secara retroaktif",urgency:"medium",principle:"red",
+  scenario:"Seorang member ingin membekukan keanggotaannya tetapi belum membayar biaya freeze terlebih dahulu, atau ingin menerapkan freeze secara retroaktif setelah absen.",
+  policy:"Keanggotaan dapat dibekukan dengan pembayaran tambahan. Pembayaran harus dilakukan terlebih dahulu — secara langsung atau melalui chat. Freeze retroaktif tidak diperbolehkan.",
+  prevent:[
+    {a:"Sebutkan opsi freeze secara proaktif saat transaksi",s:"Saat member sedang mendaftar atau melakukan pembayaran, sebutkan: \'Perlu diketahui, jika suatu saat kamu perlu menghentikan sementara keanggotaan untuk perjalanan atau alasan pribadi, kami memiliki opsi freeze — memerlukan biaya tambahan yang dibayar di depan.\'"},
+    {a:"Sebutkan saat relevan",s:"Jika member menyebutkan rencana perjalanan atau operasi — sampaikan sebelum mereka pergi."}
+  ],
+  handle:[
+    {a:"Akui situasi mereka terlebih dahulu",s:"\\"Saya sangat mengerti — izinkan saya melihat akun kamu dan menjelaskan apa yang memungkinkan.\\""},
+    {a:"Jelaskan kebijakan dengan jelas dan hangat",s:"\\"Freeze kami memerlukan pembayaran terlebih dahulu agar proses penghentian resmi bisa diproses. Saya tidak bisa menerapkannya secara retroaktif, tapi ini yang bisa saya lakukan ke depannya...\\""},
+    {a:"Tawarkan apa yang memungkinkan",s:"Tawarkan freeze mulai hari ini ke depan. Jika situasinya luar biasa — eskalasi ke manager."},
+    {a:"Eskalasi keadaan darurat yang sebenarnya",s:"Medis, berkabung, atau situasi darurat yang terdokumentasi — eskalasi ke manager sebelum membuat janji apapun."}
+  ],
+  resolve:[
+    {a:"Konfirmasi freeze telah diproses",s:"Tunjukkan tanggal kedaluwarsa baru. Kirim konfirmasi WhatsApp: \'Freeze kamu telah diterapkan — tanggal akhir baru adalah [X].\'"},
+    {a:"Catat kasusnya",s:"Nama member, jenis keanggotaan, tanggal permintaan freeze, hasil, pengecualian manager jika ada."},
+    {a:"Tindak lanjuti jika ada pengecualian",s:"Konfirmasi secara tertulis via WhatsApp agar tidak ada kebingungan nanti."}
+  ],
+  escalate:"Permintaan apapun yang mengutip alasan medis atau darurat — eskalasi ke manager sebelum membuat komitmen apapun.",
+  dos:["Sebutkan opsi freeze saat pendaftaran dan transaksi","Bersikap hangat — perjalanan dan penyakit adalah situasi nyata","Eskalasi keadaan darurat yang sebenarnya daripada menolak mentah-mentah"],
+  donts:["Menerapkan freeze retroaktif tanpa persetujuan manager","Membuat pengecualian yang bertentangan dengan kebijakan tanpa instruksi","Membiarkan member tanpa langkah selanjutnya"]}
+},
+refund:{
+  en:{title:"Refund Request — Standard Membership",cat:"Policy & Membership",sub:"Member requesting a refund",urgency:"high",principle:"red",
+  scenario:"A member wants a refund on their membership for various reasons — dissatisfaction, leaving Bali, or a personal decision to cancel.",
+  policy:"Memberships are non-refundable and transferable. This is agreed to at sign-in. Front desk does not approve or deny refunds.",
+  prevent:[
+    {a:"Ensure sign-in terms are acknowledged",s:"Members press agree on the tablet — the non-refundable policy is stated there explicitly."},
+    {a:"Offer the freeze as an alternative when relevant",s:"If someone mentions leaving soon — proactively suggest freezing instead of cancelling."}
+  ],
+  handle:[
+    {a:"Listen fully before mentioning policy",s:"\\"I\'m really sorry to hear that — let me make sure I understand your situation fully.\\""},
+    {a:"Ask what prompted the request",s:"Sometimes members want to be heard, not just refunded. Understanding the reason helps."},
+    {a:"Escalate — do not approve or deny",s:"\\"What I\'ll do is take your details and pass this to my manager who handles these directly. They\'ll follow up with you within [timeframe].\\""},
+    {a:"Give a clear follow-up timeline",s:"Never leave a member waiting without a deadline for a response."}
+  ],
+  resolve:[
+    {a:"Manager communicates the decision in writing",s:"Front desk does not deliver refund outcomes."},
+    {a:"Log the full case",s:"Member name, reason given, evidence provided, date escalated, decision made."},
+    {a:"If declined — offer freeze as alternative",s:"Always leave the member with another option, not just a no."}
+  ],
+  escalate:"ALL refund requests — escalate immediately. Front desk role is to empathise, gather information, and hand over.",
+  dos:["Make them feel heard before mentioning policy","Get their details and give a follow-up timeline","Offer a freeze as an alternative in the same conversation"],
+  donts:["Say \'we don\'t do refunds\' and end the conversation","Approve or deny without manager","Leave them with no next step"]},
+  id:{title:"Permintaan Refund — Keanggotaan Standar",cat:"Kebijakan & Keanggotaan",sub:"Member meminta refund",urgency:"high",principle:"red",
+  scenario:"Seorang member ingin refund keanggotaannya karena berbagai alasan — ketidakpuasan, meninggalkan Bali, atau keputusan pribadi untuk membatalkan.",
+  policy:"Keanggotaan tidak dapat dikembalikan dan dapat dipindahtangankan. Ini disetujui saat sign-in. Front desk tidak menyetujui atau menolak refund.",
+  prevent:[
+    {a:"Pastikan ketentuan sign-in diakui",s:"Member menekan setuju di tablet — kebijakan non-refundable dinyatakan di sana secara eksplisit."},
+    {a:"Tawarkan freeze sebagai alternatif",s:"Jika seseorang menyebutkan akan segera pergi — sarankan freeze daripada membatalkan."}
+  ],
+  handle:[
+    {a:"Dengarkan sepenuhnya sebelum menyebutkan kebijakan",s:"\\"Saya sangat menyesal mendengar itu — izinkan saya memahami situasi kamu sepenuhnya.\\""},
+    {a:"Tanyakan apa yang mendorong permintaan",s:"Kadang member ingin didengar, bukan hanya refund. Memahami alasannya membantu."},
+    {a:"Eskalasi — jangan setujui atau tolak",s:"\\"Yang akan saya lakukan adalah mengambil detail kamu dan meneruskannya ke manager saya yang menangani ini secara langsung. Mereka akan menindaklanjuti dalam [jangka waktu].\\""},
+    {a:"Berikan jadwal tindak lanjut yang jelas",s:"Jangan pernah membiarkan member menunggu tanpa batas waktu respons."}
+  ],
+  resolve:[
+    {a:"Manager mengkomunikasikan keputusan secara tertulis",s:"Front desk tidak menyampaikan hasil refund."},
+    {a:"Catat kasus lengkap",s:"Nama member, alasan yang diberikan, bukti yang disediakan, tanggal eskalasi, keputusan yang dibuat."},
+    {a:"Jika ditolak — tawarkan freeze sebagai alternatif",s:"Selalu tinggalkan member dengan opsi lain, bukan hanya penolakan."}
+  ],
+  escalate:"SEMUA permintaan refund — eskalasi segera. Peran front desk adalah berempati, mengumpulkan informasi, dan meneruskan.",
+  dos:["Buat mereka merasa didengar sebelum menyebutkan kebijakan","Dapatkan detail mereka dan berikan jadwal tindak lanjut","Tawarkan freeze sebagai alternatif dalam percakapan yang sama"],
+  donts:["Mengatakan \'kami tidak melakukan refund\' dan mengakhiri percakapan","Menyetujui atau menolak tanpa manager","Membiarkan mereka tanpa langkah selanjutnya"]}
+},
+lastday:{
+  en:{title:"Last Day / Membership Expiry Confusion",cat:"Policy & Membership",sub:"Member confused about when their membership ends",urgency:"low",principle:"white",
+  scenario:"A member arrives believing their membership is still active, but it has expired or expires today. They may be confused or frustrated.",
+  policy:"Memberships run from activation date. Facial recognition access ends at expiry. No grace periods unless explicitly approved by management.",
+  prevent:[
+    {a:"Mention the expiry date during the transaction",s:"At the point of purchase, always tell the member their expiry date: \'Your membership runs until [date] — would you like a reminder via WhatsApp or email a few days before it expires?\'"},
+    {a:"If hot weather is expected to affect the gym environment, mention it during sign-up or tour",s:"\'Just so you know, on particularly hot days the temperature inside can be affected — we do have cooling measures in place and we\'re always working to improve this.\'"}
+  ],
+  handle:[
+    {a:"Check the system before saying anything",s:"Know the facts first. Don\'t guess or speculate aloud."},
+    {a:"Explain warmly and clearly",s:"\\"Your membership ran from [start] to [end] — it looks like it wrapped up on [date]. Totally understand that can catch you off guard.\\""},
+    {a:"Offer renewal on the spot",s:"\\"I can get you sorted right now — want me to walk you through the current options?\\""},
+    {a:"Offer a day pass as a bridge",s:"If they\'re not ready to renew — offer a day pass so they can still train today."}
+  ],
+  resolve:[
+    {a:"Process renewal or day pass immediately",s:"Never send them away without a path to train today."},
+    {a:"Log if the confusion had a systemic cause",s:"If a staff member gave incorrect information — note it for the team debrief."}
+  ],
+  escalate:"Only if there\'s a billing discrepancy or a staff miscommunication that caused the confusion.",
+  dos:["Mention the expiry date during the transaction and offer a reminder","Check the system before speaking","Offer renewal immediately in the same breath"],
+  donts:["Turn them away without offering options","Make them feel accused","Promise grace periods without manager approval"]},
+  id:{title:"Hari Terakhir / Kebingungan Kedaluwarsa Keanggotaan",cat:"Kebijakan & Keanggotaan",sub:"Member bingung tentang kapan keanggotaan mereka berakhir",urgency:"low",principle:"white",
+  scenario:"Seorang member datang dengan asumsi keanggotaannya masih aktif, tetapi sudah kedaluwarsa atau berakhir hari ini.",
+  policy:"Keanggotaan berjalan dari tanggal aktivasi. Akses pengenalan wajah berakhir saat kedaluwarsa. Tidak ada masa tenggang kecuali disetujui manajemen.",
+  prevent:[
+    {a:"Sebutkan tanggal kedaluwarsa saat transaksi",s:"Saat pembelian, selalu beritahu member tanggal kedaluwarsa mereka: \'Keanggotaan kamu berlaku hingga [tanggal] — apakah kamu ingin pengingat via WhatsApp atau email beberapa hari sebelumnya?\'"},
+    {a:"Jika cuaca panas dapat mempengaruhi kondisi gym, sebutkan saat pendaftaran atau tur",s:"\'Perlu diketahui, pada hari yang sangat panas suhu di dalam bisa terpengaruh — kami memiliki langkah-langkah pendinginan dan terus berupaya memperbaikinya.\'"}
+  ],
+  handle:[
+    {a:"Periksa sistem sebelum mengatakan apapun",s:"Ketahui faktanya dulu. Jangan menebak atau berspekulasi."},
+    {a:"Jelaskan dengan hangat dan jelas",s:"\\"Keanggotaan kamu berjalan dari [mulai] hingga [akhir] — sepertinya berakhir pada [tanggal]. Saya sangat mengerti itu bisa mengejutkan.\\""},
+    {a:"Tawarkan pembaruan di tempat",s:"\\"Saya bisa membantu kamu sekarang — mau saya jelaskan opsi yang tersedia saat ini?\\""},
+    {a:"Tawarkan day pass sebagai jembatan",s:"Jika mereka belum siap memperbarui — tawarkan day pass agar mereka tetap bisa latihan hari ini."}
+  ],
+  resolve:[
+    {a:"Proses pembaruan atau day pass segera",s:"Jangan pernah mengirim mereka pergi tanpa cara untuk berlatih hari ini."},
+    {a:"Catat jika kebingungan memiliki penyebab sistemik",s:"Jika staf memberikan informasi yang salah — catat untuk debrief tim."}
+  ],
+  escalate:"Hanya jika ada perbedaan tagihan atau miskomunikasi staf yang menyebabkan kebingungan.",
+  dos:["Sebutkan tanggal kedaluwarsa saat transaksi dan tawarkan pengingat","Periksa sistem sebelum berbicara","Tawarkan pembaruan segera dalam napas yang sama"],
+  donts:["Mengirim mereka pergi tanpa menawarkan opsi","Membuat mereka merasa dituduh","Menjanjikan masa tenggang tanpa persetujuan manager"]}
+},
+forcemajeure:{
+  en:{title:"Force Majeure — Illness, Visa, Injury, Bereavement",cat:"Policy & Membership",sub:"Emergency beyond member's control",urgency:"high",principle:"red",
+  scenario:"A member cannot use their membership due to hospitalisation, visa expiry, deportation, injury, or bereavement, and is seeking resolution.",
+  policy:"Memberships are non-refundable. Manager may approve a freeze extension, transfer, or goodwill gesture in genuine force majeure cases. Documentation required.",
+  prevent:[
+    {a:"Communicate the freeze option at sign-up",s:"Freeze is the protective mechanism for these situations. Members who know about it will use it before a crisis hits."}
+  ],
+  handle:[
+    {a:"Lead with empathy — not policy",s:"\\"I\'m so sorry to hear this — let\'s see what we can do to help you through this.\\""},
+    {a:"Ask what resolution they\'re hoping for",s:"Sometimes members want acknowledgement, a freeze, or a transfer — not necessarily a refund."},
+    {a:"Request documentation gently",s:"Medical certificate, visa stamp, or relevant proof. Ask with understanding."},
+    {a:"Escalate to manager with full context, same day",s:"Bring all documentation and a summary of the conversation."}
+  ],
+  resolve:[
+    {a:"Manager contacts member within 24 hours",s:"With a clear answer — not a form response."},
+    {a:"Log outcome in full",s:"Decision made, evidence reviewed, any goodwill extended, date communicated."},
+    {a:"Follow up after resolution",s:"A brief check-in 1 week later shows care beyond the transaction."}
+  ],
+  escalate:"Always. Front desk role is empathy and information gathering only. Manager owns the outcome.",
+  dos:["Lead with humanity first","Ask what they need before explaining limitations","Pass it up fast — same day"],
+  donts:["Cite policy before acknowledging their situation","Make them repeat the story to multiple people","Leave without giving a manager name and response timeline"]},
+  id:{title:"Force Majeure — Sakit, Visa, Cedera, Berkabung",cat:"Kebijakan & Keanggotaan",sub:"Darurat di luar kendali member",urgency:"high",principle:"red",
+  scenario:"Seorang member tidak dapat menggunakan keanggotaannya karena rawat inap, kedaluwarsa visa, deportasi, cedera, atau berkabung.",
+  policy:"Keanggotaan tidak dapat dikembalikan. Manager dapat menyetujui perpanjangan freeze, transfer, atau gesture niat baik dalam kasus force majeure yang terbukti.",
+  prevent:[
+    {a:"Komunikasikan opsi freeze saat pendaftaran",s:"Freeze adalah mekanisme perlindungan untuk situasi ini. Member yang mengetahuinya akan menggunakannya sebelum krisis terjadi."}
+  ],
+  handle:[
+    {a:"Mulai dengan empati — bukan kebijakan",s:"\\"Saya sangat menyesal mendengar ini — mari kita lihat apa yang bisa kami lakukan untuk membantu kamu.\\""},
+    {a:"Tanyakan resolusi apa yang mereka harapkan",s:"Kadang member menginginkan pengakuan, freeze, atau transfer — belum tentu refund."},
+    {a:"Minta dokumentasi dengan lembut",s:"Sertifikat medis, cap visa, atau bukti relevan. Tanya dengan penuh pengertian."},
+    {a:"Eskalasi ke manager dengan konteks penuh, hari yang sama",s:"Bawa semua dokumentasi dan ringkasan percakapan."}
+  ],
+  resolve:[
+    {a:"Manager menghubungi member dalam 24 jam",s:"Dengan jawaban yang jelas — bukan respons formulir."},
+    {a:"Catat hasil secara lengkap",s:"Keputusan yang dibuat, bukti yang ditinjau, niat baik yang diberikan, tanggal komunikasi."},
+    {a:"Tindak lanjuti setelah resolusi",s:"Check-in singkat 1 minggu kemudian menunjukkan kepedulian di luar transaksi."}
+  ],
+  escalate:"Selalu. Peran front desk hanya empati dan pengumpulan informasi. Manager yang memiliki hasilnya.",
+  dos:["Mulai dengan kemanusiaan terlebih dahulu","Tanyakan apa yang mereka butuhkan sebelum menjelaskan keterbatasan","Teruskan dengan cepat — hari yang sama"],
+  donts:["Menyebutkan kebijakan sebelum mengakui situasi mereka","Membuat mereka mengulang cerita ke banyak orang","Pergi tanpa memberikan nama manager dan jadwal respons"]}
+},
+ac:{
+  en:{title:"AC Not Working — Gym Too Hot",cat:"Facility & Environment",sub:"Environmental comfort complaint",urgency:"medium",principle:"black",
+  scenario:"Members are complaining the gym is too hot because the AC is broken or insufficient. May affect multiple members simultaneously.",
+  policy:"Facility issues must be reported to ops immediately. Members must be informed proactively — not reactive after they complain.",
+  prevent:[
+    {a:"Morning walkthrough includes temperature check",s:"If it feels hot before opening — escalate to ops before members arrive."},
+    {a:"If AC is under repair, communicate this verbally during member sign-in or tour",s:"Tell members proactively before they enter: \'Just so you know, we\'re currently working on improving our cooling system — we have extra air coolers in place and cold towels are available at the bar.\'"}
+  ],
+  handle:[
+    {a:"Acknowledge and act — not just empathise",s:"\\"You\'re right — it\'s warmer than it should be. Our team has been notified and is working on it. We\'re also adding more air coolers and heat absorption technology to help reduce the temperature — though it does take some time to take full effect. In the meantime, ice is available for free at the bar, and we have free cold face towels for you.\\""},
+    {a:"Escalate to ops immediately if not already done",s:"Create the ticket now. Don\'t assume someone else has done it."},
+    {a:"Never give a fix time you can\'t confirm",s:"\\"I don\'t have an exact timeline, but I\'ll update you as soon as I hear from the team.\\""}
+  ],
+  resolve:[
+    {a:"Update members when AC is fixed",s:"Message anyone who complained directly."},
+    {a:"Log the incident",s:"Time reported, ops ticket raised, resolution time, how many members affected."},
+    {a:"Review morning prevention",s:"Was this flagged in the walkthrough? If not — why not?"}
+  ],
+  escalate:"If AC is broken for more than 2 hours during peak time — escalate to manager to assess whether any goodwill offer is appropriate.",
+  dos:["Act immediately — don\'t wait for more complaints","Be honest and offer practical comfort measures","Proactively inform members before they have to ask"],
+  donts:["Say \'we\'re looking into it\' without actually contacting ops","Give a fix time you can\'t confirm","Let multiple members complain without addressing them proactively"]},
+  id:{title:"AC Tidak Berfungsi — Gym Terlalu Panas",cat:"Fasilitas & Lingkungan",sub:"Keluhan kenyamanan lingkungan",urgency:"medium",principle:"black",
+  scenario:"Member mengeluh gym terlalu panas karena AC rusak atau tidak cukup. Dapat mempengaruhi beberapa member sekaligus.",
+  policy:"Masalah fasilitas harus segera dilaporkan ke ops. Member harus diinformasikan secara proaktif — bukan reaktif setelah mereka mengeluh.",
+  prevent:[
+    {a:"Pemeriksaan pagi termasuk pengecekan suhu",s:"Jika terasa panas sebelum buka — eskalasi ke ops sebelum member datang."},
+    {a:"Jika AC sedang diperbaiki, komunikasikan ini secara verbal saat sign-in atau tur member",s:"Beritahu member secara proaktif sebelum mereka masuk: \'Perlu diketahui, kami sedang bekerja untuk meningkatkan sistem pendinginan — kami memiliki air cooler tambahan dan handuk dingin tersedia di bar.\'"}
+  ],
+  handle:[
+    {a:"Akui dan bertindak — bukan hanya berempati",s:"\\"Kamu benar — memang lebih hangat dari seharusnya. Tim kami sudah diberitahu dan sedang menanganinya. Kami juga menambahkan air cooler dan teknologi penyerap panas untuk membantu mengurangi suhu — meski butuh waktu untuk berefek penuh. Sementara itu, es tersedia gratis di bar, dan kami memiliki handuk dingin gratis untuk kamu.\\""},
+    {a:"Eskalasi ke ops segera jika belum dilakukan",s:"Buat tiket sekarang. Jangan berasumsi orang lain sudah melakukannya."},
+    {a:"Jangan memberikan waktu perbaikan yang tidak bisa dikonfirmasi",s:"\\"Saya tidak memiliki jadwal pasti, tapi saya akan menginformasikan segera setelah mendengar dari tim.\\""}
+  ],
+  resolve:[
+    {a:"Informasikan member ketika AC sudah diperbaiki",s:"Kirim pesan ke siapa saja yang mengeluh langsung."},
+    {a:"Catat insiden",s:"Waktu dilaporkan, tiket ops dibuat, waktu resolusi, berapa member yang terdampak."},
+    {a:"Tinjau pencegahan pagi",s:"Apakah ini ditandai dalam pemeriksaan? Jika tidak — kenapa tidak?"}
+  ],
+  escalate:"Jika AC rusak lebih dari 2 jam saat jam sibuk — eskalasi ke manager untuk menilai apakah penawaran niat baik diperlukan.",
+  dos:["Bertindak segera — jangan menunggu lebih banyak keluhan","Jujur dan tawarkan tindakan kenyamanan praktis","Informasikan member secara proaktif sebelum mereka bertanya"],
+  donts:["Mengatakan \'kami sedang menyelidiki\' tanpa benar-benar menghubungi ops","Memberikan waktu perbaikan yang tidak bisa dikonfirmasi","Membiarkan beberapa member mengeluh tanpa ditangani secara proaktif"]}
+},
+crowding:{
+  en:{title:"Gym Too Crowded",cat:"Facility & Environment",sub:"Peak-hour capacity complaint",urgency:"low",principle:"black",
+  scenario:"A member complains that the gym is too full — they can\'t access equipment, it feels uncomfortable, or the environment is overwhelming.",
+  policy:"No hard capacity cap currently. Member experience is the priority. Educate on off-peak hours and log recurring patterns.",
+  prevent:[
+    {a:"Post quiet hours visibly at the front desk",s:"\'Quieter times: early mornings (06:00–10:00) and evenings (16:00–22:00).\' Our peak hours are 10:00–16:00."},
+    {a:"Mention off-peak hours to new members during sign-up or tour",s:"Set expectations early — before frustration builds."}
+  ],
+  handle:[
+    {a:"Acknowledge — don\'t dismiss",s:"\\"I hear you — it is busy right now. Let me see what I can suggest.\\""},
+    {a:"Give them useful, specific information",s:"\\"Our peak hours are generally 10am to 4pm. If you\'re flexible, early mornings or evenings are a very different, much quieter experience.\\""},
+    {a:"Suggest a less crowded zone or alternative equipment",s:"A practical suggestion is worth more than an apology."}
+  ],
+  resolve:[
+    {a:"Log recurring peak complaints",s:"If multiple members raise crowding in the same week — flag to manager for capacity review."},
+    {a:"Follow up if a member left due to crowding",s:"A check-in message shows care and supports retention."}
+  ],
+  escalate:"If crowding creates a safety risk (blocked exits, equipment hazard) — escalate to manager immediately.",
+  dos:["Give actionable info — not just sympathy","Log patterns if it\'s recurring","Be honest about when the gym is quieter"],
+  donts:["Tell them to \'just wait\'","Dismiss it as normal","Ignore repeat complaints about the same time slot"]},
+  id:{title:"Gym Terlalu Padat",cat:"Fasilitas & Lingkungan",sub:"Keluhan kapasitas jam sibuk",urgency:"low",principle:"black",
+  scenario:"Seorang member mengeluh gym terlalu penuh — mereka tidak bisa mengakses peralatan, terasa tidak nyaman, atau lingkungannya membebani.",
+  policy:"Tidak ada batas kapasitas ketat saat ini. Pengalaman member adalah prioritas. Edukasi tentang jam sepi dan catat pola berulang.",
+  prevent:[
+    {a:"Tampilkan jam sepi secara terlihat di front desk",s:"\'Waktu lebih sepi: pagi hari (06:00–10:00) dan malam (16:00–22:00).\' Jam sibuk kami adalah 10:00–16:00."},
+    {a:"Sebutkan jam sepi kepada member baru saat pendaftaran atau tur",s:"Tetapkan ekspektasi lebih awal — sebelum frustrasi muncul."}
+  ],
+  handle:[
+    {a:"Akui — jangan abaikan",s:"\\"Saya mengerti — memang sedang ramai sekarang. Izinkan saya melihat apa yang bisa saya sarankan.\\""},
+    {a:"Berikan informasi yang berguna dan spesifik",s:"\\"Jam sibuk kami umumnya dari jam 10 pagi hingga 4 sore. Jika kamu fleksibel, pagi hari atau malam adalah pengalaman yang sangat berbeda dan jauh lebih sepi.\\""},
+    {a:"Sarankan zona yang lebih sepi atau peralatan alternatif",s:"Saran praktis lebih berharga dari permintaan maaf."}
+  ],
+  resolve:[
+    {a:"Catat keluhan puncak berulang",s:"Jika beberapa member mengangkat kepadatan dalam minggu yang sama — laporkan ke manager untuk tinjauan kapasitas."},
+    {a:"Tindak lanjuti jika member pergi karena kepadatan",s:"Pesan check-in menunjukkan kepedulian dan mendukung retensi."}
+  ],
+  escalate:"Jika kepadatan menimbulkan risiko keamanan (pintu keluar terblokir, bahaya peralatan) — eskalasi ke manager segera.",
+  dos:["Berikan info yang dapat ditindaklanjuti — bukan hanya simpati","Catat pola jika berulang","Jujur tentang kapan gym lebih sepi"],
+  donts:["Memberitahu mereka untuk \'tunggu saja\'","Menganggapnya normal","Mengabaikan keluhan berulang tentang slot waktu yang sama"]}
+},
+parking:{
+  en:{title:"Lost Helmet / Damaged Vehicle in Parking",cat:"Facility & Environment",sub:"Parking lot incident",urgency:"medium",principle:"white",
+  scenario:"A member reports a lost or stolen helmet, a scratch on their vehicle, or damage that occurred in Obsidian\'s parking lot.",
+  policy:"Obsidian is not responsible for items in the parking area. This must be handled with care — a policy citation without action is unacceptable.",
+  prevent:[
+    {a:"Post clear signage in the parking area",s:"\'Obsidian is not responsible for items left in the parking area. Please secure your belongings.\'"},
+    {a:"If a member asks to drop off their helmet at the front desk, use this as the moment to share the disclaimer",s:"\\"Unfortunately we\'re not able to store helmets at the front desk — helmets need to stay with your vehicle in the parking area. Just a heads up that Obsidian isn\'t responsible for items left in the parking area, so we always recommend keeping valuables with you or secured properly.\\""}
+  ],
+  handle:[
+    {a:"Acknowledge and empathise first",s:"\\"I\'m really sorry to hear that — let\'s look into this together.\\""},
+    {a:"Check CCTV if parking area has coverage",s:"Offer to review footage with manager approval. Don\'t promise — offer."},
+    {a:"Be transparent about policy",s:"\\"I want to be honest — our policy doesn\'t cover items in the parking area, but I don\'t want to leave it there. Let me get my manager.\\""},
+    {a:"Escalate to manager",s:"Manager decides whether further action or goodwill is appropriate."}
+  ],
+  resolve:[
+    {a:"Log the incident",s:"Member name, item, date/time, CCTV reviewed or not, manager notified, outcome."},
+    {a:"For swapped items — check lost and found immediately",s:"Helmets often get mixed up. Check storage in front of them."}
+  ],
+  escalate:"Always involve manager before making any commitment about responsibility or compensation.",
+  dos:["Check CCTV proactively before citing policy","Use the helmet drop-off request as the moment to share the disclaimer","Escalate before stating limitations"],
+  donts:["Lead with \'not our responsibility\'","Dismiss without checking CCTV or lost and found","Leave the member with no action taken"]},
+  id:{title:"Helm Hilang / Kendaraan Rusak di Parkiran",cat:"Fasilitas & Lingkungan",sub:"Insiden area parkir",urgency:"medium",principle:"white",
+  scenario:"Seorang member melaporkan helm yang hilang atau dicuri, goresan pada kendaraannya, atau kerusakan yang terjadi di area parkir Obsidian.",
+  policy:"Obsidian tidak bertanggung jawab atas barang-barang di area parkir. Ini harus ditangani dengan hati-hati — mengutip kebijakan tanpa tindakan tidak dapat diterima.",
+  prevent:[
+    {a:"Pasang tanda yang jelas di area parkir",s:"\'Obsidian tidak bertanggung jawab atas barang yang ditinggalkan di area parkir. Harap amankan barang bawaan kamu.\'"},
+    {a:"Jika member meminta menitipkan helm di front desk, gunakan ini sebagai momen untuk menyampaikan disclaimer",s:"\\"Sayangnya kami tidak bisa menyimpan helm di front desk — helm harus tetap bersama kendaraan kamu di area parkir. Perlu diketahui bahwa Obsidian tidak bertanggung jawab atas barang yang ditinggalkan di area parkir, jadi kami selalu menyarankan untuk menjaga barang berharga bersama kamu atau diamankan dengan baik.\\""}
+  ],
+  handle:[
+    {a:"Akui dan berempati terlebih dahulu",s:"\\"Saya sangat menyesal mendengar itu — mari kita selidiki bersama.\\""},
+    {a:"Periksa CCTV jika area parkir memiliki coverage",s:"Tawarkan untuk meninjau rekaman dengan persetujuan manager. Jangan berjanji — tawarkan."},
+    {a:"Jujur tentang kebijakan",s:"\\"Saya ingin jujur — kebijakan kami tidak mencakup barang-barang di area parkir, tapi saya tidak ingin berhenti di sini. Izinkan saya memanggil manager saya.\\""},
+    {a:"Eskalasi ke manager",s:"Manager memutuskan apakah tindakan lebih lanjut atau niat baik diperlukan."}
+  ],
+  resolve:[
+    {a:"Catat insiden",s:"Nama member, barang, tanggal/waktu, CCTV ditinjau atau tidak, manager diberitahu, hasil."},
+    {a:"Untuk barang yang tertukar — periksa lost and found segera",s:"Helm sering tertukar. Periksa penyimpanan di hadapan mereka."}
+  ],
+  escalate:"Selalu libatkan manager sebelum membuat komitmen apapun tentang tanggung jawab atau kompensasi.",
+  dos:["Periksa CCTV secara proaktif sebelum mengutip kebijakan","Gunakan permintaan penitipan helm sebagai momen untuk menyampaikan disclaimer","Eskalasi sebelum menyatakan keterbatasan"],
+  donts:["Memulai dengan \'bukan tanggung jawab kami\'","Mengabaikan tanpa memeriksa CCTV atau lost and found","Membiarkan member tanpa tindakan yang diambil"]}
+},
+lostitems:{
+  en:{title:"Lost, Stolen, or Swapped Belongings",cat:"Facility & Environment",sub:"Locker room or gym floor — missing items",urgency:"medium",principle:"white",
+  scenario:"A member reports items missing from a locker, the floor, or changing area — or discovers someone else\'s belongings instead of their own.",
+  policy:"Obsidian is not responsible for lost or stolen items. Lost items kept 7 days before donation. Lockers are day-use only and cleared at closing.",
+  prevent:[
+    {a:"Remind members at check-in about locker policy",s:"\\"Just a reminder — lockers are day use. Please clear yours before closing tonight.\\""},
+    {a:"Maintain an organised lost and found log",s:"Categorise by date found, description, and location. Updated daily."}
+  ],
+  handle:[
+    {a:"Check lost and found immediately — before anything else",s:"Do it in front of them. Most \'stolen\' items turn up here."},
+    {a:"If not found — empathise and take their details",s:"\\"I\'m sorry — it\'s not here right now. Let me take your contact so I can reach you if it comes in.\\""},
+    {a:"For potential theft — escalate and check CCTV",s:"Do not accuse anyone. Gather information and escalate to manager."},
+    {a:"For swapped items — offer to hold the found item",s:"Log it and contact the other member if identified."}
+  ],
+  resolve:[
+    {a:"Log all reported missing items",s:"Item description, member name, date, location last seen, action taken."},
+    {a:"Contact the member proactively if item is found within 7 days",s:"Proactive contact is a strong trust-building gesture."}
+  ],
+  escalate:"Suspected theft — manager and CCTV review same day. Never accuse without evidence.",
+  dos:["Check lost and found before citing policy","Take their details for follow-up","Treat suspected theft seriously and discreetly"],
+  donts:["Open with \'we\'re not responsible\'","Accuse anyone based on assumption","Forget to follow up if the item later comes in"]},
+  id:{title:"Barang Hilang, Dicuri, atau Tertukar",cat:"Fasilitas & Lingkungan",sub:"Ruang loker atau lantai gym — barang yang hilang",urgency:"medium",principle:"white",
+  scenario:"Seorang member melaporkan barang hilang dari loker, lantai, atau area ganti — atau menemukan barang orang lain sebagai gantinya.",
+  policy:"Obsidian tidak bertanggung jawab atas barang yang hilang atau dicuri. Barang yang hilang disimpan selama 7 hari sebelum disumbangkan. Loker hanya untuk penggunaan harian.",
+  prevent:[
+    {a:"Ingatkan member saat check-in tentang kebijakan loker",s:"\\"Sebagai pengingat — loker hanya untuk penggunaan harian. Harap dikosongkan sebelum kami tutup malam ini.\\""},
+    {a:"Pertahankan log lost and found yang terorganisir",s:"Kategorikan berdasarkan tanggal ditemukan, deskripsi, dan lokasi. Diperbarui setiap hari."}
+  ],
+  handle:[
+    {a:"Periksa lost and found segera — sebelum segalanya",s:"Lakukan di hadapan mereka. Sebagian besar barang yang \'dicuri\' ditemukan di sini."},
+    {a:"Jika tidak ditemukan — berempati dan ambil detail mereka",s:"\\"Maaf — tidak ada di sini sekarang. Izinkan saya mengambil kontak kamu agar bisa menghubungi jika barangnya masuk.\\""},
+    {a:"Untuk potensi pencurian — eskalasi dan periksa CCTV",s:"Jangan menuduh siapapun. Kumpulkan informasi dan eskalasi ke manager."},
+    {a:"Untuk barang yang tertukar — tawarkan untuk menyimpan barang yang ditemukan",s:"Catat dan hubungi member lain jika teridentifikasi."}
+  ],
+  resolve:[
+    {a:"Catat semua barang yang dilaporkan hilang",s:"Deskripsi barang, nama member, tanggal, lokasi terakhir dilihat, tindakan yang diambil."},
+    {a:"Hubungi member secara proaktif jika barang ditemukan dalam 7 hari",s:"Kontak proaktif adalah gesture membangun kepercayaan yang kuat."}
+  ],
+  escalate:"Dugaan pencurian — manager dan tinjauan CCTV pada hari yang sama. Jangan menuduh tanpa bukti.",
+  dos:["Periksa lost and found sebelum mengutip kebijakan","Ambil detail mereka untuk tindak lanjut","Tangani dugaan pencurian dengan serius dan diskret"],
+  donts:["Membuka dengan \'kami tidak bertanggung jawab\'","Menuduh siapapun berdasarkan asumsi","Lupa menindaklanjuti jika barang kemudian masuk"]}
+},
+dresscode:{
+  en:{title:"Dress Code Complaint — Inconsistent Enforcement",cat:"Member Conduct",sub:"Open-toe shoes, shirtless training",urgency:"low",principle:"red",
+  scenario:"A member complains the dress code is applied inconsistently — they were asked to comply while seeing others do the same thing without consequence.",
+  policy:"Closed-toe shoes required in main gym. Open-toe allowed only with socks. Shirtless training permitted in functional area only. All agreed to at sign-in.",
+  prevent:[
+    {a:"Apply dress code consistently — every member, every shift",s:"Inconsistency is the complaint. If one staff member enforces and another doesn\'t — members notice."},
+    {a:"Dress code is a daily briefing point, not a one-time policy",s:"Raise it at every shift start until it becomes automatic."}
+  ],
+  handle:[
+    {a:"Acknowledge the inconsistency honestly",s:"\\"You\'re right that this should be applied equally to everyone — I\'m sorry if that wasn\'t your experience. The rule is [X] and it applies across the board.\\""},
+    {a:"Enforce the rule calmly — offer a practical solution",s:"\\"In the main gym we do need closed-toe shoes. You\'re welcome to use the functional area without them, or if you need socks, we do have some available for purchase at our merchandise section at the front desk.\\""},
+    {a:"Do not blame other staff",s:"Address the rule — not who enforced or didn\'t enforce it before."}
+  ],
+  resolve:[
+    {a:"Log inconsistency complaints",s:"If the same rule comes up repeatedly — bring it to the next team debrief."},
+    {a:"Re-brief the team without naming individuals",s:"Address the gap in application as a team standard."}
+  ],
+  escalate:"If a member refuses to comply after a clear, polite explanation — escalate to manager.",
+  dos:["Acknowledge the inconsistency honestly and directly","Enforce the rule — not the argument","Suggest socks from the merchandise section as a practical solution"],
+  donts:["Make exceptions to keep the peace","Blame other staff in front of the member","Suggest borrowing from lost and found — this is not available"]},
+  id:{title:"Keluhan Kode Berpakaian — Penerapan Tidak Konsisten",cat:"Perilaku Member",sub:"Sepatu terbuka, latihan tanpa baju",urgency:"low",principle:"red",
+  scenario:"Seorang member mengeluh kode berpakaian diterapkan secara tidak konsisten — mereka diminta mematuhi sementara melihat orang lain melakukan hal yang sama tanpa konsekuensi.",
+  policy:"Sepatu tertutup diperlukan di gym utama. Sepatu terbuka hanya diperbolehkan dengan kaus kaki. Latihan tanpa baju hanya diperbolehkan di area fungsional.",
+  prevent:[
+    {a:"Terapkan kode berpakaian secara konsisten — setiap member, setiap shift",s:"Inkonsistensi adalah keluhannya. Jika satu staf menerapkan dan yang lain tidak — member memperhatikan."},
+    {a:"Kode berpakaian adalah poin briefing harian, bukan kebijakan satu kali",s:"Angkat di setiap awal shift hingga menjadi otomatis."}
+  ],
+  handle:[
+    {a:"Akui inkonsistensi dengan jujur",s:"\\"Kamu benar bahwa ini harus diterapkan secara merata kepada semua orang — saya minta maaf jika itu bukan pengalaman kamu. Aturannya adalah [X] dan berlaku untuk semua.\\""},
+    {a:"Terapkan aturan dengan tenang — tawarkan solusi praktis",s:"\\"Di gym utama kami memerlukan sepatu tertutup. Kamu bisa menggunakan area fungsional tanpa sepatu, atau jika membutuhkan kaus kaki, kami memiliki beberapa yang tersedia untuk dibeli di bagian merchandise di front desk.\\""},
+    {a:"Jangan salahkan staf lain",s:"Tangani aturannya — bukan siapa yang menerapkan atau tidak menerapkannya sebelumnya."}
+  ],
+  resolve:[
+    {a:"Catat keluhan inkonsistensi",s:"Jika aturan yang sama muncul berulang kali — bawa ke debrief tim berikutnya."},
+    {a:"Briefing ulang tim tanpa menyebut nama individu",s:"Tangani kesenjangan penerapan sebagai standar tim."}
+  ],
+  escalate:"Jika member menolak mematuhi setelah penjelasan yang jelas dan sopan — eskalasi ke manager.",
+  dos:["Akui inkonsistensi dengan jujur dan langsung","Terapkan aturan — bukan argumen","Sarankan kaus kaki dari bagian merchandise sebagai solusi praktis"],
+  donts:["Membuat pengecualian untuk menjaga kedamaian","Menyalahkan staf lain di hadapan member","Menyarankan meminjam dari lost and found — ini tidak tersedia"]}
+},
+dogs:{
+  en:{title:"Dog Complaints — Bites, Aggression, Barking, No Leash",cat:"Member Conduct",sub:"Pet-related incidents",urgency:"high",principle:"red",
+  scenario:"A dog bites another member, is barking aggressively, or is off-leash in a restricted area. Another member complains or feels unsafe.",
+  policy:"Dogs require a signed waiver releasing Obsidian from responsibility before entry. Pets are not allowed inside the gym — only designated areas. Bites and aggression are safety matters requiring immediate escalation.",
+  prevent:[
+    {a:"Confirm the waiver is signed at entry — every time, no exceptions",s:"No waiver = no entry for the dog. Non-negotiable."},
+    {a:"Remind the owner of leash and area rules at entry",s:"\\"Just a reminder — dogs must stay in the designated area and be leashed at all times.\\""},
+    {a:"Address aggressive behaviour before it becomes an incident",s:"If a dog shows aggression signs — act immediately, before contact occurs."}
+  ],
+  handle:[
+    {a:"For a bite or injury — the injured person is priority one",s:"First aid, privacy, calm. Remove them from the dog\'s proximity immediately."},
+    {a:"Separate the dog and owner from the area",s:"Politely but firmly: \'I need to ask you to move your dog outside right now.\'"},
+    {a:"Escalate to manager immediately — call security if needed",s:"Any bite or aggressive incident is manager and security level. Do not handle alone."},
+    {a:"For barking or disturbance only",s:"\\"I understand your dog is excited — we do need them calm in this space. Could you move to the designated area or step outside briefly?\\""}
+  ],
+  resolve:[
+    {a:"Log the incident in full",s:"Dog owner, dog description, incident type, injured member if any, first aid given, manager notified."},
+    {a:"Manager follows up with the injured member within 24 hours",s:"As a care gesture."},
+    {a:"Review whether a waiver was signed",s:"If not — this gap must be closed immediately."}
+  ],
+  escalate:"Any physical injury from a dog — manager and security must be involved. Potential legal exposure means full documentation is essential.",
+  dos:["Prioritise the injured person first — always","Separate the dog calmly but immediately","Check whether a waiver was signed"],
+  donts:["Argue with the owner at the scene","Ignore barking or aggression as \'not a big deal\'","Handle a bite incident without manager and security involvement"]},
+  id:{title:"Keluhan Anjing — Gigitan, Agresi, Menggonggong, Tanpa Tali",cat:"Perilaku Member",sub:"Insiden terkait hewan peliharaan",urgency:"high",principle:"red",
+  scenario:"Seekor anjing menggigit member lain, menggonggong dengan agresif, atau tidak bertali di area terlarang. Member lain mengeluh atau merasa tidak aman.",
+  policy:"Anjing memerlukan surat pernyataan yang ditandatangani melepaskan tanggung jawab Obsidian sebelum masuk. Hewan peliharaan tidak diperbolehkan di dalam gym — hanya di area yang ditentukan.",
+  prevent:[
+    {a:"Konfirmasi surat pernyataan ditandatangani saat masuk — setiap saat, tanpa pengecualian",s:"Tidak ada surat pernyataan = anjing tidak boleh masuk. Tidak bisa ditawar."},
+    {a:"Ingatkan pemilik tentang aturan tali dan area saat masuk",s:"\\"Sebagai pengingat — anjing harus tetap di area yang ditentukan dan ditali setiap saat.\\""},
+    {a:"Tangani perilaku agresif sebelum menjadi insiden",s:"Jika anjing menunjukkan tanda agresi — bertindak segera, sebelum kontak terjadi."}
+  ],
+  handle:[
+    {a:"Untuk gigitan atau cedera — orang yang terluka adalah prioritas pertama",s:"Pertolongan pertama, privasi, ketenangan. Jauhkan mereka dari anjing segera."},
+    {a:"Pisahkan anjing dan pemilik dari area",s:"Dengan sopan tapi tegas: \'Saya perlu meminta kamu memindahkan anjingmu keluar sekarang.\'"},
+    {a:"Eskalasi ke manager segera — hubungi keamanan jika diperlukan",s:"Setiap insiden gigitan atau agresif adalah level manager dan keamanan. Jangan tangani sendiri."},
+    {a:"Untuk menggonggong atau gangguan saja",s:"\\"Saya mengerti anjingmu bersemangat — kami perlu mereka tenang di ruang ini. Bisakah kamu pindah ke area yang ditentukan atau keluar sebentar?\\""}
+  ],
+  resolve:[
+    {a:"Catat insiden secara lengkap",s:"Pemilik anjing, deskripsi anjing, jenis insiden, member yang terluka jika ada, pertolongan pertama yang diberikan, manager diberitahu."},
+    {a:"Manager menindaklanjuti member yang terluka dalam 24 jam",s:"Sebagai gesture kepedulian."},
+    {a:"Tinjau apakah surat pernyataan ditandatangani",s:"Jika tidak — celah ini harus segera ditutup."}
+  ],
+  escalate:"Setiap cedera fisik dari anjing — manager dan keamanan harus dilibatkan. Paparan hukum potensial berarti dokumentasi lengkap sangat penting.",
+  dos:["Prioritaskan orang yang terluka terlebih dahulu — selalu","Pisahkan anjing dengan tenang tapi segera","Periksa apakah surat pernyataan ditandatangani"],
+  donts:["Berdebat dengan pemilik di tempat kejadian","Mengabaikan gonggongan atau agresi sebagai \'tidak masalah\'","Menangani insiden gigitan tanpa keterlibatan manager dan keamanan"]}
+},
+odour:{
+  en:{title:"Member Body Odour — Other Members Complaining",cat:"Member Conduct",sub:"Hygiene complaint",urgency:"medium",principle:"red",
+  scenario:"One or more members approach the desk saying another member\'s body odour is affecting their experience and asking staff to intervene.",
+  policy:"Members agree at sign-in to use deodorant and bring a towel. Hygiene is a stated condition of membership — front desk has a basis to act.",
+  prevent:[
+    {a:"Hygiene requirement is in the sign-in terms",s:"Members have agreed. You have a policy basis to address it — this is not an overreach."},
+    {a:"Keep deodorant visible at the front desk",s:"Available without making it pointed. Some members genuinely don\'t realise."}
+  ],
+  handle:[
+    {a:"Thank the complaining member and apologise first",s:"\\"Thank you for letting us know — we\'re really sorry for the discomfort. I\'ll take care of this privately right away.\\""},
+    {a:"Ask for the other member\'s details or description if they have them",s:"\\"Could you describe the member or point out the area where you noticed this? That helps us address it properly.\\""},
+    {a:"Ask which area they felt the discomfort in",s:"This helps you pinpoint the situation without singling anyone out unnecessarily."},
+    {a:"Assure them the cleaning team will improve hygiene in that area",s:"\\"Our cleaning team is on it — we\'ll make sure that area is refreshed immediately.\\""},
+    {a:"If the complaint about the same person persists — advise via email or Instagram, not in person",s:"\\"If this continues, we will reach out to the member directly via email or Instagram to address it — we do this to avoid any discomfort or offense to them in person.\\""}
+  ],
+  resolve:[
+    {a:"Never tell the affected member that someone complained",s:"Frame it as a hygiene standard issue — not a peer report. Always."},
+    {a:"Log briefly",s:"Date, area, handled, escalation if any."},
+    {a:"If it continues — escalate to manager",s:"Repeat instances may require a more formal communication from management via email or Instagram."}
+  ],
+  escalate:"If the member becomes confrontational when approached — step back and involve manager immediately.",
+  dos:["Thank and apologise to the complainant first","Get details — description and area","Frame your cleaning response around the area, not the person"],
+  donts:["Tell them another member complained","Address it publicly on the gym floor","Approach the affected member in person unprepared"]},
+  id:{title:"Bau Badan Member — Member Lain Mengeluh",cat:"Perilaku Member",sub:"Keluhan kebersihan",urgency:"medium",principle:"red",
+  scenario:"Satu atau lebih member mendekati meja mengatakan bau badan member lain mempengaruhi pengalaman mereka dan meminta staf untuk ikut campur.",
+  policy:"Member setuju saat sign-in untuk menggunakan deodoran dan membawa handuk. Kebersihan adalah syarat keanggotaan yang dinyatakan — front desk memiliki dasar untuk bertindak.",
+  prevent:[
+    {a:"Persyaratan kebersihan ada dalam ketentuan sign-in",s:"Member telah menyetujui. Kamu memiliki dasar kebijakan untuk mengatasinya — ini bukan tindakan berlebihan."},
+    {a:"Simpan deodoran terlihat di front desk",s:"Tersedia tanpa membuatnya terasa diarahkan. Beberapa member benar-benar tidak menyadari."}
+  ],
+  handle:[
+    {a:"Ucapkan terima kasih dan minta maaf terlebih dahulu",s:"\\"Terima kasih sudah memberitahu kami — kami sangat menyesal atas ketidaknyamanan ini. Saya akan menanganinya secara pribadi segera.\\""},
+    {a:"Tanyakan detail atau deskripsi member lain jika mereka memilikinya",s:"\\"Bisakah kamu mendeskripsikan member tersebut atau menunjukkan area di mana kamu merasakan ini? Itu membantu kami menanganinya dengan tepat.\\""},
+    {a:"Tanyakan area mana yang terasa tidak nyaman",s:"Ini membantu kamu menentukan situasi tanpa perlu menyingling siapapun secara tidak perlu."},
+    {a:"Pastikan tim kebersihan akan meningkatkan kebersihan di area tersebut",s:"\\"Tim kebersihan kami sedang menanganinya — kami akan memastikan area tersebut segera disegarkan.\\""},
+    {a:"Jika keluhan tentang orang yang sama berlanjut — sampaikan via email atau Instagram, bukan langsung",s:"\\"Jika ini berlanjut, kami akan menghubungi member tersebut langsung melalui email atau Instagram untuk menanganinya — kami melakukan ini untuk menghindari ketidaknyamanan atau rasa tersinggung bagi mereka secara langsung.\\""}
+  ],
+  resolve:[
+    {a:"Jangan pernah memberitahu member yang terdampak bahwa seseorang mengeluh",s:"Bingkai sebagai masalah standar kebersihan — bukan laporan dari rekan. Selalu."},
+    {a:"Catat secara singkat",s:"Tanggal, area, ditangani, eskalasi jika ada."},
+    {a:"Jika berlanjut — eskalasi ke manager",s:"Insiden berulang mungkin memerlukan komunikasi lebih formal dari manajemen via email atau Instagram."}
+  ],
+  escalate:"Jika member menjadi konfrontatif ketika didekati — mundur dan libatkan manager segera.",
+  dos:["Ucapkan terima kasih dan minta maaf kepada pengadu terlebih dahulu","Dapatkan detail — deskripsi dan area","Bingkai respons kebersihan kamu seputar area, bukan orangnya"],
+  donts:["Memberitahu mereka bahwa member lain mengeluh","Mengatasinya secara publik di lantai gym","Mendekati member yang terdampak secara langsung tanpa persiapan"]}
+},
+disruptive:{
+  en:{title:"Disruptive Member — Disturbing Others",cat:"Member Conduct",sub:"Noise, space, unsolicited advice, content creation",urgency:"medium",principle:"red",
+  scenario:"A member is disturbing others — excessively loud, filming content that bothers members, giving unsolicited advice, or taking up disproportionate space.",
+  policy:"Members agree to respectful behaviour at sign-in. Content creation is allowed if it doesn\'t disturb others. Disrespectful behaviour may result in membership termination.",
+  prevent:[
+    {a:"Rules are visible and agreed to",s:"The sign-in tablet sets the standard before any issue arises."},
+    {a:"Floor presence is preventative",s:"Regular visibility from staff naturally moderates behaviour."}
+  ],
+  handle:[
+    {a:"Acknowledge the complainant discreetly",s:"\\"Thank you — I\'ll take care of it.\\""},
+    {a:"Approach the disruptive member calmly and privately",s:"\\"Hey — quick word. I\'ve had some feedback about [specific behaviour]. I just want to flag it so you\'re aware — we do ask everyone to keep it considerate for others.\\""},
+    {a:"Be specific, not general",s:"\'The volume of your sets\' is actionable. \'You\'re too loud\' invites an argument."},
+    {a:"One clear, warm warning before any escalation",s:"Give them the chance to adjust before involving management."}
+  ],
+  resolve:[
+    {a:"Check in with the complaining member after",s:"\\"Just wanted to let you know it\'s been addressed — thank you for bringing it to us.\\""},
+    {a:"Log the incident",s:"Date, behaviour type, who was approached, outcome, any recurrence."},
+    {a:"Escalate on recurrence",s:"Repeat disruption after a warning is a manager conversation."}
+  ],
+  escalate:"If behaviour doesn\'t change after one warning, or if it\'s aggressive — manager immediately.",
+  dos:["Be specific about the behaviour","One warm warning before escalating","Always follow up with the person who reported it"],
+  donts:["Call them out in front of other members","Give vague feedback","Ignore it — the complaining member is watching what you do"]},
+  id:{title:"Member yang Mengganggu — Mengganggu Orang Lain",cat:"Perilaku Member",sub:"Kebisingan, ruang, saran tidak diminta, pembuatan konten",urgency:"medium",principle:"red",
+  scenario:"Seorang member mengganggu orang lain — terlalu berisik, merekam konten yang mengganggu member, memberikan saran tidak diminta, atau mengambil ruang yang tidak proporsional.",
+  policy:"Member setuju untuk berperilaku hormat saat sign-in. Pembuatan konten diperbolehkan jika tidak mengganggu orang lain. Perilaku tidak sopan dapat mengakibatkan pemutusan keanggotaan.",
+  prevent:[
+    {a:"Aturan terlihat dan disetujui",s:"Tablet sign-in menetapkan standar sebelum masalah apapun muncul."},
+    {a:"Kehadiran di lantai bersifat preventif",s:"Visibilitas rutin dari staf secara alami memoderasi perilaku."}
+  ],
+  handle:[
+    {a:"Akui pengadu secara diskret",s:"\\"Terima kasih — saya akan menanganinya.\\""},
+    {a:"Dekati member yang mengganggu dengan tenang dan pribadi",s:"\\"Hey — sebentar. Saya mendapat umpan balik tentang [perilaku spesifik]. Saya hanya ingin menandainya agar kamu sadar — kami meminta semua orang untuk menjaga kesopanan bagi orang lain.\\""},
+    {a:"Spesifik, bukan umum",s:"\'Volume set kamu\' dapat ditindaklanjuti. \'Kamu terlalu berisik\' mengundang argumen."},
+    {a:"Satu peringatan yang jelas dan hangat sebelum eskalasi",s:"Beri mereka kesempatan untuk menyesuaikan sebelum melibatkan manajemen."}
+  ],
+  resolve:[
+    {a:"Check in dengan member yang mengeluh setelahnya",s:"\\"Hanya ingin memberitahu kamu bahwa itu sudah ditangani — terima kasih sudah memberitahu kami.\\""},
+    {a:"Catat insiden",s:"Tanggal, jenis perilaku, siapa yang didekati, hasil, kekambuhan apapun."},
+    {a:"Eskalasi saat kambuh",s:"Gangguan berulang setelah peringatan adalah percakapan level manager."}
+  ],
+  escalate:"Jika perilaku tidak berubah setelah satu peringatan, atau jika agresif — manager segera.",
+  dos:["Spesifik tentang perilaku","Satu peringatan hangat sebelum eskalasi","Selalu tindak lanjuti dengan orang yang melaporkan"],
+  donts:["Menyorotinya di hadapan member lain","Memberikan umpan balik yang samar","Mengabaikannya — member yang mengeluh melihat apa yang kamu lakukan"]}
+},
+harassment:{
+  en:{title:"Harassment & Stalking",cat:"Safety & Security",sub:"Member targeting another member or staff",urgency:"high",principle:"red",
+  scenario:"A member reports being followed, repeatedly approached, photographed without consent, or verbally harassed by another member or a stranger on premises.",
+  policy:"Zero tolerance. Any aggression, harassment, or abuse results in membership termination without refund. Non-negotiable per sign-in terms.",
+  prevent:[
+    {a:"Know your regulars — notice patterns before they escalate",s:"Awareness is the earliest form of prevention. Something that \'feels off\' should be logged."},
+    {a:"Make it easy and comfortable to report",s:"A welcoming front desk culture means members come to you earlier."}
+  ],
+  handle:[
+    {a:"Take it seriously from the first word",s:"\\"Thank you for telling me. This is serious and I\'m going to act on it right now.\\""},
+    {a:"Ensure the reporting member feels physically safe first",s:"Move them away from the alleged harasser. Offer a private space."},
+    {a:"Get a full account without rushing them",s:"\\"Can you tell me what happened, in your own time? I\'m listening.\\""},
+    {a:"Escalate to manager same day — immediately",s:"Harassment is never a front desk resolution."},
+    {a:"Do not confront the accused on the floor",s:"Manager decides all next steps."}
+  ],
+  resolve:[
+    {a:"Manager contacts the reporting member within 24 hours",s:"With a clear update on what action has been taken."},
+    {a:"If confirmed — membership termination",s:"Per zero tolerance policy. No refund. Manager communicates this."},
+    {a:"Log every detail",s:"Both parties, dates, incidents described, witnesses, actions taken. This may become a legal matter."},
+    {a:"Follow up with the reporting member",s:"They need to know the outcome."}
+  ],
+  escalate:"Immediately and always. If the alleged harasser is still on premises and the victim feels unsafe — manager must be physically present now.",
+  dos:["Take it seriously from the first sentence","Ensure their safety before anything else","Log every detail — this may have legal implications"],
+  donts:["Suggest they \'sort it out between themselves\'","Confront the accused without manager involvement","Fail to follow up with the reporting member on the outcome"]},
+  id:{title:"Pelecehan & Stalking",cat:"Keamanan & Perlindungan",sub:"Member yang menarget member lain atau staf",urgency:"high",principle:"red",
+  scenario:"Seorang member melaporkan diikuti, didekati berulang kali, difoto tanpa persetujuan, atau dilecehkan secara verbal oleh member lain atau orang asing di tempat.",
+  policy:"Zero tolerance. Setiap agresi, pelecehan, atau penyalahgunaan mengakibatkan pemutusan keanggotaan tanpa refund. Tidak bisa dinegosiasikan.",
+  prevent:[
+    {a:"Kenali pelanggan tetap — perhatikan pola sebelum eskalasi",s:"Kesadaran adalah bentuk pencegahan paling awal. Sesuatu yang \'terasa salah\' harus dicatat."},
+    {a:"Buat pelaporan mudah dan nyaman",s:"Budaya front desk yang ramah berarti member datang kepada kamu lebih awal."}
+  ],
+  handle:[
+    {a:"Anggap serius dari kata pertama",s:"\\"Terima kasih sudah memberitahu saya. Ini serius dan saya akan bertindak sekarang.\\""},
+    {a:"Pastikan member yang melapor merasa aman secara fisik terlebih dahulu",s:"Jauhkan mereka dari dugaan pelaku pelecehan. Tawarkan ruang pribadi."},
+    {a:"Dapatkan akun lengkap tanpa terburu-buru",s:"\\"Bisakah kamu ceritakan apa yang terjadi, dengan caramu sendiri? Saya mendengarkan.\\""},
+    {a:"Eskalasi ke manager hari yang sama — segera",s:"Pelecehan tidak pernah diselesaikan di front desk."},
+    {a:"Jangan konfrontasi tertuduh di lantai",s:"Manager memutuskan semua langkah selanjutnya."}
+  ],
+  resolve:[
+    {a:"Manager menghubungi member yang melapor dalam 24 jam",s:"Dengan pembaruan yang jelas tentang tindakan apa yang telah diambil."},
+    {a:"Jika terkonfirmasi — pemutusan keanggotaan",s:"Sesuai kebijakan zero tolerance. Tanpa refund. Manager mengkomunikasikan ini."},
+    {a:"Catat setiap detail",s:"Kedua pihak, tanggal, insiden yang dijelaskan, saksi, tindakan yang diambil."},
+    {a:"Tindak lanjuti dengan member yang melapor",s:"Mereka perlu mengetahui hasilnya."}
+  ],
+  escalate:"Segera dan selalu. Jika dugaan pelaku masih di tempat dan korban merasa tidak aman — manager harus hadir secara fisik sekarang.",
+  dos:["Anggap serius dari kalimat pertama","Pastikan keamanan mereka sebelum segalanya","Catat setiap detail — ini mungkin menjadi masalah hukum"],
+  donts:["Menyarankan mereka \'menyelesaikannya sendiri\'","Konfrontasi tertuduh tanpa keterlibatan manager","Gagal menindaklanjuti dengan member yang melapor tentang hasilnya"]}
+},
+stolen:{
+  en:{title:"Suspected Theft & CCTV Requests",cat:"Safety & Security",sub:"Member requests camera footage or suspects another member",urgency:"high",principle:"white",
+  scenario:"A member believes their items were stolen and asks to see CCTV footage, or wants the gym to take action against a suspected individual.",
+  policy:"Obsidian is not responsible for lost or stolen items per sign-in terms. CCTV review requires manager approval. Privacy of all members must be maintained.",
+  prevent:[
+    {a:"Signage about day-use lockers and no overnight storage",s:"Prevention starts with expectation-setting before the loss happens."},
+    {a:"Remind members to use locks and clear lockers before closing",s:"A verbal reminder at busy periods prevents the overnight loss."}
+  ],
+  handle:[
+    {a:"Acknowledge seriously — this is distressing",s:"\\"I\'m really sorry — let\'s take this seriously and look into it properly right now.\\""},
+    {a:"Check lost and found first, before anything else",s:"Always check. Many \'stolen\' items are found here. Do it in front of them."},
+    {a:"Escalate CCTV request to manager immediately",s:"\\"I can\'t authorise CCTV review myself, but I\'m getting my manager right now who can review this with you.\\""},
+    {a:"Take a detailed report",s:"What was taken, where stored, when last seen, locker number if applicable."}
+  ],
+  resolve:[
+    {a:"Manager reviews CCTV and communicates findings",s:"Same day if possible."},
+    {a:"If theft confirmed — cooperate if police involvement is requested",s:"Obsidian\'s role is to support — not to adjudicate."},
+    {a:"Log in full",s:"Item description, locker number, CCTV reviewed, findings, outcome."}
+  ],
+  escalate:"Any confirmed or suspected theft — manager, same day. Full documentation is essential.",
+  dos:["Check lost and found first — every time","Treat the member\'s distress with full seriousness","Escalate CCTV to manager — never review it yourself uninstructed"],
+  donts:["Dismiss it as \'probably just misplaced\'","Promise CCTV access you cannot authorise","Name or imply blame toward another member without evidence"]},
+  id:{title:"Dugaan Pencurian & Permintaan CCTV",cat:"Keamanan & Perlindungan",sub:"Member meminta rekaman kamera atau mencurigai member lain",urgency:"high",principle:"white",
+  scenario:"Seorang member percaya barang mereka dicuri dan meminta melihat rekaman CCTV, atau ingin gym mengambil tindakan terhadap individu yang dicurigai.",
+  policy:"Obsidian tidak bertanggung jawab atas barang yang hilang atau dicuri sesuai ketentuan sign-in. Tinjauan CCTV memerlukan persetujuan manager.",
+  prevent:[
+    {a:"Tanda tentang loker penggunaan harian dan tidak ada penyimpanan semalam",s:"Pencegahan dimulai dengan menetapkan ekspektasi sebelum kehilangan terjadi."},
+    {a:"Ingatkan member untuk menggunakan kunci dan mengosongkan loker sebelum tutup",s:"Pengingat verbal di periode sibuk mencegah kehilangan semalam."}
+  ],
+  handle:[
+    {a:"Akui dengan serius — ini menyedihkan",s:"\\"Saya sangat menyesal — mari kita tangani ini dengan serius dan selidiki dengan benar sekarang.\\""},
+    {a:"Periksa lost and found terlebih dahulu, sebelum segalanya",s:"Selalu periksa. Banyak barang yang \'dicuri\' ditemukan di sini. Lakukan di hadapan mereka."},
+    {a:"Eskalasi permintaan CCTV ke manager segera",s:"\\"Saya tidak bisa mengotorisasi tinjauan CCTV sendiri, tapi saya sedang memanggil manager saya sekarang yang bisa meninjau ini bersama kamu.\\""},
+    {a:"Ambil laporan terperinci",s:"Apa yang diambil, di mana disimpan, kapan terakhir dilihat, nomor loker jika berlaku."}
+  ],
+  resolve:[
+    {a:"Manager meninjau CCTV dan mengkomunikasikan temuan",s:"Hari yang sama jika memungkinkan."},
+    {a:"Jika pencurian terkonfirmasi — bekerja sama jika keterlibatan polisi diminta",s:"Peran Obsidian adalah mendukung — bukan mengadili."},
+    {a:"Catat secara lengkap",s:"Deskripsi barang, nomor loker, CCTV ditinjau, temuan, hasil."}
+  ],
+  escalate:"Setiap pencurian yang terkonfirmasi atau dicurigai — manager, hari yang sama.",
+  dos:["Periksa lost and found terlebih dahulu — setiap saat","Tangani kesedihan member dengan penuh keseriusan","Eskalasi CCTV ke manager — jangan tinjau sendiri tanpa instruksi"],
+  donts:["Mengabaikannya sebagai \'mungkin hanya salah tempat\'","Menjanjikan akses CCTV yang tidak bisa kamu otorisasi","Menyebut atau mengimplikasikan kesalahan ke member lain tanpa bukti"]}
+},
+cctv:{
+  en:{title:"CCTV Concerns — Privacy and Changing Areas",cat:"Safety & Security",sub:"Member uncomfortable about camera placement",urgency:"medium",principle:"white",
+  scenario:"A member is uncomfortable or upset about CCTV cameras — or believes cameras may be placed in changing areas.",
+  policy:"CCTV placement follows legal and privacy regulations. Cameras are not permitted in changing areas. All privacy concerns are taken seriously.",
+  prevent:[{a:"Be clear and transparent about camera locations if asked",s:"Know where cameras are and where they are not. Transparency prevents anxiety."}],
+  handle:[
+    {a:"Take the concern seriously",s:"\\"I completely understand — privacy matters and I want to address this properly.\\""},
+    {a:"Clarify camera locations honestly",s:"\\"CCTV is installed in [X areas] — there are no cameras in changing rooms. I can confirm that clearly.\\""},
+    {a:"Escalate if concern remains",s:"If they want formal confirmation — manager."},
+    {a:"If a camera placement is actually problematic",s:"Do not downplay it. Escalate to manager immediately."}
+  ],
+  resolve:[
+    {a:"Manager provides written clarification for formal complaints",s:"A written response from management is appropriate for privacy concerns."},
+    {a:"Log the concern",s:"Member, concern raised, clarification given, escalation if any."}
+  ],
+  escalate:"If a member believes they were recorded in a changing area — serious privacy matter. Manager and potentially legal guidance required immediately.",
+  dos:["Be fully transparent about camera locations","Escalate if verbal clarification doesn\'t resolve the concern","Take it seriously even if you\'re confident no issue exists"],
+  donts:["Dismiss the concern as unfounded","Handle a changing-room recording complaint without manager involvement"]},
+  id:{title:"Kekhawatiran CCTV — Privasi dan Area Ganti",cat:"Keamanan & Perlindungan",sub:"Member tidak nyaman tentang penempatan kamera",urgency:"medium",principle:"white",
+  scenario:"Seorang member tidak nyaman atau kesal tentang kamera CCTV — atau percaya kamera mungkin ditempatkan di area ganti.",
+  policy:"Penempatan CCTV mengikuti peraturan hukum dan privasi. Kamera tidak diperbolehkan di area ganti. Semua kekhawatiran privasi ditangani serius.",
+  prevent:[{a:"Jelas dan transparan tentang lokasi kamera jika ditanya",s:"Ketahui di mana kamera berada dan di mana tidak. Transparansi mencegah kecemasan."}],
+  handle:[
+    {a:"Anggap serius kekhawatirannya",s:"\\"Saya sangat mengerti — privasi itu penting dan saya ingin menangani ini dengan benar.\\""},
+    {a:"Klarifikasi lokasi kamera dengan jujur",s:"\\"CCTV dipasang di [area X] — tidak ada kamera di ruang ganti. Saya bisa mengkonfirmasi itu dengan jelas.\\""},
+    {a:"Eskalasi jika kekhawatiran berlanjut",s:"Jika mereka menginginkan konfirmasi formal — manager."},
+    {a:"Jika penempatan kamera sebenarnya bermasalah",s:"Jangan meremehkannya. Eskalasi ke manager segera."}
+  ],
+  resolve:[
+    {a:"Manager memberikan klarifikasi tertulis untuk keluhan formal",s:"Respons tertulis dari manajemen sesuai untuk kekhawatiran privasi."},
+    {a:"Catat kekhawatiran",s:"Member, kekhawatiran yang diangkat, klarifikasi yang diberikan, eskalasi jika ada."}
+  ],
+  escalate:"Jika member percaya mereka direkam di area ganti — masalah privasi serius. Manager dan kemungkinan panduan hukum diperlukan segera.",
+  dos:["Transparan sepenuhnya tentang lokasi kamera","Eskalasi jika klarifikasi verbal tidak menyelesaikan kekhawatiran","Anggap serius bahkan jika kamu yakin tidak ada masalah"],
+  donts:["Mengabaikan kekhawatiran sebagai tidak berdasar","Menangani keluhan rekaman ruang ganti tanpa keterlibatan manager"]}
+},
+vulgar:{
+  en:{title:"Vulgar Content or Inappropriate Activity",cat:"Safety & Security",sub:"Explicit filming, sexual behaviour, extreme content",urgency:"high",principle:"red",
+  scenario:"A member is filming explicit content, engaging in sexual behaviour, or another member has reported witnessing something inappropriate or disturbing.",
+  policy:"Content creation allowed if it doesn\'t disturb others. Zero tolerance for sexual behaviour or content violating gym standards. Termination without refund.",
+  prevent:[
+    {a:"Content creation policy is in the sign-in terms",s:"Members have agreed to the limits before entering."},
+    {a:"Regular floor presence deters inappropriate behaviour",s:"Visible staff presence is the most effective passive prevention."}
+  ],
+  handle:[
+    {a:"Approach calmly — not aggressively",s:"\\"Excuse me — I need a quick word with you privately.\\""},
+    {a:"Move the conversation away from other members first",s:"Remove them from the area before any discussion."},
+    {a:"State the situation clearly",s:"\\"What I\'ve been made aware of is a violation of our code of conduct. I need to ask you to stop, and I\'m going to involve my manager right now.\\""},
+    {a:"Escalate to manager immediately",s:"This is manager territory. Do not try to resolve or decide alone."}
+  ],
+  resolve:[
+    {a:"Manager decides on membership termination",s:"Zero tolerance policy."},
+    {a:"Log in full detail",s:"Behaviour witnessed or reported, who reported it, who was approached, manager involved, outcome."},
+    {a:"Follow up with the member who reported it",s:"They need to know the outcome."}
+  ],
+  escalate:"Immediately. Front desk role is to pause the situation calmly and hand to manager.",
+  dos:["Stay calm — do not react emotionally","Remove the member from the area before addressing","Escalate immediately without delay"],
+  donts:["Attempt to resolve or make a termination decision yourself","Confront loudly in front of other members","Fail to follow up with the person who reported it"]},
+  id:{title:"Konten Vulgar atau Aktivitas Tidak Pantas",cat:"Keamanan & Perlindungan",sub:"Perekaman eksplisit, perilaku seksual, konten ekstrem",urgency:"high",principle:"red",
+  scenario:"Seorang member merekam konten eksplisit, terlibat dalam perilaku seksual, atau member lain melaporkan menyaksikan sesuatu yang tidak pantas atau mengganggu.",
+  policy:"Pembuatan konten diperbolehkan jika tidak mengganggu orang lain. Zero tolerance untuk perilaku seksual atau konten yang melanggar standar gym. Pemutusan tanpa refund.",
+  prevent:[
+    {a:"Kebijakan pembuatan konten ada dalam ketentuan sign-in",s:"Member telah menyetujui batasannya sebelum masuk."},
+    {a:"Kehadiran lantai yang rutin mencegah perilaku tidak pantas",s:"Kehadiran staf yang terlihat adalah pencegahan pasif paling efektif."}
+  ],
+  handle:[
+    {a:"Dekati dengan tenang — bukan agresif",s:"\\"Permisi — saya perlu bicara sebentar dengan kamu secara pribadi.\\""},
+    {a:"Pindahkan percakapan jauh dari member lain terlebih dahulu",s:"Jauhkan mereka dari area sebelum diskusi apapun."},
+    {a:"Nyatakan situasi dengan jelas",s:"\\"Yang saya ketahui adalah pelanggaran kode etik kami. Saya perlu meminta kamu untuk berhenti, dan saya akan melibatkan manager saya sekarang.\\""},
+    {a:"Eskalasi ke manager segera",s:"Ini adalah wilayah manager. Jangan mencoba menyelesaikan atau memutuskan sendiri."}
+  ],
+  resolve:[
+    {a:"Manager memutuskan pemutusan keanggotaan",s:"Kebijakan zero tolerance."},
+    {a:"Catat secara detail lengkap",s:"Perilaku yang disaksikan atau dilaporkan, siapa yang melaporkan, siapa yang didekati, manager terlibat, hasil."},
+    {a:"Tindak lanjuti dengan member yang melaporkan",s:"Mereka perlu mengetahui hasilnya."}
+  ],
+  escalate:"Segera. Peran front desk adalah menghentikan situasi dengan tenang dan menyerahkan ke manager.",
+  dos:["Tetap tenang — jangan bereaksi secara emosional","Jauhkan member dari area sebelum ditangani","Eskalasi segera tanpa penundaan"],
+  donts:["Mencoba menyelesaikan atau membuat keputusan pemutusan sendiri","Konfrontasi dengan keras di hadapan member lain","Gagal menindaklanjuti dengan orang yang melaporkan"]}
+},
+food:{
+  en:{title:"Food Poisoning / Restaurant Complaint",cat:"Health & Incidents",sub:"Illness after eating at Obsidian restaurant",urgency:"high",principle:"white",
+  scenario:"A member or guest reports feeling ill after eating at the gym\'s restaurant. They may be on-site or contacting remotely.",
+  policy:"Food safety is a legal and reputational matter. Any report must be escalated immediately. Front desk does not speak for the restaurant on liability.",
+  prevent:[{a:"Any kitchen concern you observe must go to ops immediately",s:"Don\'t wait for a complaint — if something looks off in the food or service area, escalate now."}],
+  handle:[
+    {a:"If they are physically unwell on-site — health first",s:"Water, a seat, privacy. Assess whether medical assistance is needed. Call if in doubt."},
+    {a:"Take the complaint fully and seriously",s:"\\"I\'m really sorry to hear this — can you tell me what you had and when? I\'m getting this to the right person immediately.\\""},
+    {a:"Escalate to manager now — do not wait",s:"Do not gather more information than necessary at this stage."},
+    {a:"Do not offer compensation or admit fault",s:"Front desk does not speak for the restaurant on liability."}
+  ],
+  resolve:[
+    {a:"Manager contacts member same day",s:"A formal follow-up — not just \'I\'ve passed it on.\'"},
+    {a:"Log in full",s:"Member name, what was consumed, when, symptoms, medical assistance if needed, escalation made."},
+    {a:"Review if multiple reports emerge",s:"A pattern = urgent ops and management escalation."}
+  ],
+  escalate:"Always and immediately. Food poisoning has legal implications. Manager must own this case from the start.",
+  dos:["Prioritise their physical wellbeing first","Get the manager involved before doing anything else","Treat it as urgent — always"],
+  donts:["Offer refunds or apologies on behalf of the restaurant","Delay escalation to gather more information","Minimise it as \'probably just an upset stomach\'"]},
+  id:{title:"Keracunan Makanan / Keluhan Restoran",cat:"Kesehatan & Insiden",sub:"Sakit setelah makan di restoran Obsidian",urgency:"high",principle:"white",
+  scenario:"Seorang member atau tamu melaporkan merasa sakit setelah makan di restoran gym. Mereka mungkin berada di tempat atau menghubungi dari jarak jauh.",
+  policy:"Keamanan pangan adalah masalah hukum dan reputasi. Laporan apapun harus segera dieskalasi. Front desk tidak berbicara atas nama restoran tentang tanggung jawab.",
+  prevent:[{a:"Setiap kekhawatiran dapur yang kamu amati harus segera dilaporkan ke ops",s:"Jangan tunggu keluhan — jika ada sesuatu yang terlihat aneh di area makanan atau layanan, eskalasi sekarang."}],
+  handle:[
+    {a:"Jika mereka sakit secara fisik di tempat — kesehatan dulu",s:"Air, kursi, privasi. Nilai apakah bantuan medis diperlukan. Hubungi jika ragu."},
+    {a:"Tangani keluhan sepenuhnya dan serius",s:"\\"Saya sangat menyesal mendengar ini — bisakah kamu ceritakan apa yang kamu makan dan kapan? Saya akan segera meneruskan ini ke orang yang tepat.\\""},
+    {a:"Eskalasi ke manager sekarang — jangan tunggu",s:"Jangan kumpulkan lebih banyak informasi dari yang diperlukan pada tahap ini."},
+    {a:"Jangan tawarkan kompensasi atau akui kesalahan",s:"Front desk tidak berbicara atas nama restoran tentang tanggung jawab."}
+  ],
+  resolve:[
+    {a:"Manager menghubungi member hari yang sama",s:"Tindak lanjut formal — bukan hanya \'saya sudah meneruskannya.\'"},
+    {a:"Catat secara lengkap",s:"Nama member, apa yang dikonsumsi, kapan, gejala, bantuan medis jika diperlukan, eskalasi yang dilakukan."},
+    {a:"Tinjau jika beberapa laporan muncul",s:"Pola = eskalasi ops dan manajemen yang mendesak."}
+  ],
+  escalate:"Selalu dan segera. Keracunan makanan memiliki implikasi hukum. Manager harus memiliki kasus ini dari awal.",
+  dos:["Prioritaskan kesehatan fisik mereka terlebih dahulu","Libatkan manager sebelum melakukan apapun","Perlakukan sebagai mendesak — selalu"],
+  donts:["Menawarkan refund atau permintaan maaf atas nama restoran","Menunda eskalasi untuk mengumpulkan lebih banyak informasi","Meremehkannya sebagai \'mungkin hanya perut tidak enak\'"]}
+},
+injury:{
+  en:{title:"Member Injury on the Gym Floor",cat:"Health & Incidents",sub:"Accident during training",urgency:"high",principle:"black",
+  scenario:"A member has been injured — during training, due to equipment failure, or a fall. They may be in pain, in shock, or seeking help.",
+  policy:"Members accept the risk of physical activity at sign-in. Obsidian still has a duty of care. Equipment-related injuries require full incident documentation.",
+  prevent:[
+    {a:"Unsafe or broken equipment must be taken offline immediately",s:"If a machine is damaged — out of service before the next member uses it. No exceptions."},
+    {a:"Brief new members on equipment basics",s:"\\"If anything feels off with a machine — stop and come to us. Don\'t push through.\\""}
+  ],
+  handle:[
+    {a:"Go to them immediately — don\'t wait at the desk",s:"Physical presence matters. Don\'t ask questions from across the floor."},
+    {a:"Assess — do they need emergency services?",s:"If yes — call immediately. When in doubt, call."},
+    {a:"Administer first aid within your training level",s:"Don\'t exceed your qualifications. Get qualified help if needed."},
+    {a:"Give them privacy — move other members away",s:"Nobody should be watching. Clear the immediate area calmly."},
+    {a:"Escalate to manager immediately",s:"Every injury — no matter how minor — is a manager case."}
+  ],
+  resolve:[
+    {a:"Log the incident in complete detail",s:"Time, location, what happened, equipment involved if any, first aid administered, emergency services called, manager informed."},
+    {a:"Manager follows up with the member same day",s:"To check on their wellbeing — not to discuss liability."},
+    {a:"Take the equipment or area offline pending inspection",s:"Does not go back into use until inspected and cleared."}
+  ],
+  escalate:"Always. Every physical injury is a manager case — even if the member says they\'re fine.",
+  dos:["Go to them immediately — don\'t manage it from the desk","Call emergency services if there is any doubt","Give them full privacy on the floor"],
+  donts:["Minimise it — \'you\'ll be fine\'","Delay escalation because it seems minor","Leave the injured member alone on the floor at any point"]},
+  id:{title:"Cedera Member di Lantai Gym",cat:"Kesehatan & Insiden",sub:"Kecelakaan saat latihan",urgency:"high",principle:"black",
+  scenario:"Seorang member terluka — saat latihan, karena kegagalan peralatan, atau jatuh. Mereka mungkin kesakitan, syok, atau mencari bantuan.",
+  policy:"Member menerima risiko aktivitas fisik saat sign-in. Obsidian tetap memiliki kewajiban kepedulian. Cedera terkait peralatan memerlukan dokumentasi insiden lengkap.",
+  prevent:[
+    {a:"Peralatan yang tidak aman atau rusak harus dinonaktifkan segera",s:"Jika mesin rusak — tidak beroperasi sebelum member berikutnya menggunakannya. Tanpa pengecualian."},
+    {a:"Briefing member baru tentang dasar-dasar peralatan",s:"\\"Jika ada yang terasa aneh dengan mesin — berhenti dan datang ke kami. Jangan dipaksakan.\\""}
+  ],
+  handle:[
+    {a:"Pergi ke mereka segera — jangan tunggu di meja",s:"Kehadiran fisik itu penting. Jangan bertanya dari seberang lantai."},
+    {a:"Nilai — apakah mereka memerlukan layanan darurat?",s:"Jika ya — hubungi segera. Saat ragu, hubungi."},
+    {a:"Berikan pertolongan pertama sesuai tingkat pelatihan kamu",s:"Jangan melebihi kualifikasi kamu. Dapatkan bantuan yang qualified jika diperlukan."},
+    {a:"Beri mereka privasi — jauhkan member lain",s:"Tidak ada yang boleh menonton. Bersihkan area terdekat dengan tenang."},
+    {a:"Eskalasi ke manager segera",s:"Setiap cedera — sekecil apapun — adalah kasus manager."}
+  ],
+  resolve:[
+    {a:"Catat insiden secara detail lengkap",s:"Waktu, lokasi, apa yang terjadi, peralatan yang terlibat jika ada, pertolongan pertama diberikan, layanan darurat dipanggil, manager diberitahu."},
+    {a:"Manager menindaklanjuti member hari yang sama",s:"Untuk mengecek kesejahteraan mereka — bukan untuk membahas tanggung jawab."},
+    {a:"Nonaktifkan peralatan atau area sambil menunggu inspeksi",s:"Tidak boleh digunakan kembali sampai diperiksa dan dibersihkan."}
+  ],
+  escalate:"Selalu. Setiap cedera fisik adalah kasus manager — bahkan jika member mengatakan mereka baik-baik saja.",
+  dos:["Pergi ke mereka segera — jangan kelola dari meja","Hubungi layanan darurat jika ada keraguan","Beri mereka privasi penuh di lantai"],
+  donts:["Meremehkan — \'kamu akan baik-baik saja\'","Menunda eskalasi karena tampak kecil","Membiarkan member yang terluka sendirian di lantai kapanpun"]}
+},
+angry:{
+  en:{title:"Angry or Aggressive Member",cat:"Conflict & Aggression",sub:"Raised voice, threats, aggressive behaviour",urgency:"high",principle:"red",
+  scenario:"A member is visibly angry — raised voice, aggressive tone, making demands — at the front desk or on the gym floor.",
+  policy:"Zero tolerance for aggression or abuse toward staff or other members. Violations result in termination without refund.",
+  prevent:[{a:"Most anger is a symptom of a felt injustice",s:"Proactive communication — expiry reminders, AC updates, honest policy — prevents the boiling point."}],
+  handle:[
+    {a:"Lower your own voice — never match their energy",s:"Your calm is the most powerful tool. Speak slower and softer."},
+    {a:"Acknowledge before explaining or defending anything",s:"\\"I can see you\'re really frustrated — I want to understand what\'s happened. I\'m here.\\""},
+    {a:"Move the conversation off the floor",s:"\\"Would it help if we stepped over here so I can give you my full attention?\\""},
+    {a:"If the member becomes physically aggressive toward staff — call security immediately",s:"Do not attempt to restrain or engage physically. Remove yourself to safety and call security. This is non-negotiable."},
+    {a:"If you witness physical aggression between members — call security immediately",s:"Separate verbally if safe to do so, but do not place yourself between physically aggressive parties. Security must be involved."},
+    {a:"If verbal aggression continues — involve manager",s:"\\"I want to make sure this is handled properly — let me get my manager so we can resolve this together right now.\\""}
+  ],
+  resolve:[
+    {a:"Log the full interaction",s:"What triggered it, how it was handled, security or manager involved, outcome."},
+    {a:"Manager reviews if termination is appropriate",s:"Repeat aggression or serious threats — termination without refund per policy."},
+    {a:"Debrief the staff member involved",s:"Being on the receiving end of aggression is difficult. Check in with your team."}
+  ],
+  escalate:"After one calm de-escalation attempt — if physical aggression occurs at any point, security is called immediately. No exceptions.",
+  dos:["Stay calm — your energy sets the room\'s temperature","Acknowledge before explaining anything","Call security immediately for any physical aggression"],
+  donts:["Match their tone or argue back","Try to physically restrain or block an aggressive member","Forget to debrief the staff member afterwards"]},
+  id:{title:"Member yang Marah atau Agresif",cat:"Konflik & Agresi",sub:"Suara keras, ancaman, perilaku agresif",urgency:"high",principle:"red",
+  scenario:"Seorang member terlihat marah — suara keras, nada agresif, membuat tuntutan — di front desk atau di lantai gym.",
+  policy:"Zero tolerance untuk agresi atau penyalahgunaan terhadap staf atau member lain. Pelanggaran mengakibatkan pemutusan tanpa refund.",
+  prevent:[{a:"Sebagian besar kemarahan adalah gejala dari ketidakadilan yang dirasakan",s:"Komunikasi proaktif — pengingat kedaluwarsa, pembaruan AC, kebijakan yang jujur — mencegah titik didih."}],
+  handle:[
+    {a:"Turunkan suaramu sendiri — jangan pernah mencocokkan energi mereka",s:"Ketenanganmu adalah alat paling ampuh. Bicara lebih lambat dan lebih lembut."},
+    {a:"Akui sebelum menjelaskan atau membela apapun",s:"\\"Saya bisa melihat kamu sangat frustrasi — saya ingin memahami apa yang terjadi. Saya di sini.\\""},
+    {a:"Pindahkan percakapan dari lantai",s:"\\"Apakah membantu jika kita pindah ke sini agar saya bisa memberikan perhatian penuh?\\""},
+    {a:"Jika member menjadi agresif secara fisik terhadap staf — hubungi keamanan segera",s:"Jangan mencoba menahan atau terlibat secara fisik. Jauhkan dirimu ke tempat aman dan hubungi keamanan. Ini tidak bisa dinegosiasikan."},
+    {a:"Jika kamu menyaksikan agresi fisik antar member — hubungi keamanan segera",s:"Pisahkan secara verbal jika aman untuk dilakukan, tapi jangan menempatkan dirimu di antara pihak yang agresif secara fisik. Keamanan harus dilibatkan."},
+    {a:"Jika agresi verbal berlanjut — libatkan manager",s:"\\"Saya ingin memastikan ini ditangani dengan benar — izinkan saya memanggil manager saya agar kita bisa menyelesaikan ini bersama sekarang.\\""}
+  ],
+  resolve:[
+    {a:"Catat interaksi lengkap",s:"Apa yang memicunya, bagaimana ditangani, keamanan atau manager dilibatkan, hasil."},
+    {a:"Manager meninjau apakah pemutusan sesuai",s:"Agresi berulang atau ancaman serius — pemutusan tanpa refund sesuai kebijakan."},
+    {a:"Debrief anggota staf yang terlibat",s:"Menjadi sasaran agresi itu sulit. Check in dengan timmu."}
+  ],
+  escalate:"Setelah satu upaya de-eskalasi yang tenang — jika agresi fisik terjadi kapanpun, keamanan segera dipanggil. Tanpa pengecualian.",
+  dos:["Tetap tenang — energimu mengatur suhu ruangan","Akui sebelum menjelaskan apapun","Hubungi keamanan segera untuk agresi fisik apapun"],
+  donts:["Mencocokkan nada mereka atau balik berdebat","Mencoba menahan atau memblokir member yang agresif secara fisik","Lupa melakukan debrief dengan anggota staf setelahnya"]}
+},
+intermember:{
+  en:{title:"Member-to-Member Dispute",cat:"Conflict & Aggression",sub:"Equipment, space, unsolicited behaviour between members",urgency:"high",principle:"red",
+  scenario:"Two members are in conflict on the gym floor — over equipment access, personal space, or a personal grievance. One or both approach the desk.",
+  policy:"Respect and safety are non-negotiable. Front desk stabilises and mediates. Manager decides on any formal action or termination.",
+  prevent:[
+    {a:"Rules are visible and agreed to at sign-in",s:"Equipment sharing and behaviour expectations are part of the terms every member has accepted."},
+    {a:"Floor presence allows early interception",s:"Catching a rising tension before it boils is the best resolution."}
+  ],
+  handle:[
+    {a:"Separate them — speak to each individually first",s:"Do not attempt to mediate both parties at once."},
+    {a:"Listen to each account without taking sides",s:"\\"Thank you for telling me — let me hear the other side before I respond.\\""},
+    {a:"Apply the rule neutrally — not a personal judgement",s:"If a rule was broken — state it. If it\'s a preference clash — find a practical resolution."},
+    {a:"If either member becomes physically aggressive — call security immediately",s:"Do not attempt to physically intervene. Your role is to stabilise verbally and get security involved immediately."},
+    {a:"If verbal dispute continues — escalate to manager",s:"Manager mediates. Front desk stabilises only."}
+  ],
+  resolve:[
+    {a:"Log both accounts separately",s:"Each side, what rule if any was applied, resolution reached, monitoring needed."},
+    {a:"Follow up with both members separately",s:"Each needs to feel the matter was taken seriously."},
+    {a:"Manager decides if a formal warning is needed",s:"Repeat behaviour or any aggression = manager action."}
+  ],
+  escalate:"Any physical aggression between members — security immediately. Not a front desk situation under any circumstance.",
+  dos:["Separate before attempting any mediation","Remain neutral — apply rules, not opinions","Call security immediately for any physical aggression"],
+  donts:["Try to adjudicate who is \'right\'","Place yourself physically between aggressive parties","Ignore it and hope it resolves on its own"]},
+  id:{title:"Perselisihan Antar Member",cat:"Konflik & Agresi",sub:"Peralatan, ruang, perilaku tidak diminta antar member",urgency:"high",principle:"red",
+  scenario:"Dua member berkonflik di lantai gym — atas akses peralatan, ruang pribadi, atau keluhan pribadi. Satu atau keduanya mendekati meja.",
+  policy:"Hormat dan keamanan tidak bisa dinegosiasikan. Front desk menstabilkan dan memediasi. Manager memutuskan tindakan formal atau pemutusan.",
+  prevent:[
+    {a:"Aturan terlihat dan disetujui saat sign-in",s:"Ekspektasi berbagi peralatan dan perilaku adalah bagian dari ketentuan yang telah diterima setiap member."},
+    {a:"Kehadiran lantai memungkinkan intersepsi dini",s:"Menangkap ketegangan yang meningkat sebelum mendidih adalah resolusi terbaik."}
+  ],
+  handle:[
+    {a:"Pisahkan mereka — bicara dengan masing-masing secara individual terlebih dahulu",s:"Jangan mencoba memediasi kedua pihak sekaligus."},
+    {a:"Dengarkan setiap akun tanpa berpihak",s:"\\"Terima kasih sudah memberitahu saya — izinkan saya mendengar sisi lain sebelum saya merespons.\\""},
+    {a:"Terapkan aturan secara netral — bukan penilaian pribadi",s:"Jika aturan dilanggar — nyatakan. Jika ini bentrokan preferensi — temukan solusi praktis."},
+    {a:"Jika salah satu member menjadi agresif secara fisik — hubungi keamanan segera",s:"Jangan mencoba intervensi fisik. Peranmu adalah menstabilkan secara verbal dan melibatkan keamanan segera."},
+    {a:"Jika perselisihan verbal berlanjut — eskalasi ke manager",s:"Manager memediasi. Front desk hanya menstabilkan."}
+  ],
+  resolve:[
+    {a:"Catat kedua akun secara terpisah",s:"Setiap sisi, aturan apa jika ada yang diterapkan, resolusi yang dicapai, pemantauan yang diperlukan."},
+    {a:"Tindak lanjuti dengan kedua member secara terpisah",s:"Masing-masing perlu merasa masalah ditangani serius."},
+    {a:"Manager memutuskan apakah peringatan formal diperlukan",s:"Perilaku berulang atau agresi apapun = tindakan manager."}
+  ],
+  escalate:"Agresi fisik apapun antar member — keamanan segera. Bukan situasi front desk dalam keadaan apapun.",
+  dos:["Pisahkan sebelum mencoba mediasi apapun","Tetap netral — terapkan aturan, bukan pendapat","Hubungi keamanan segera untuk agresi fisik apapun"],
+  donts:["Mencoba mengadili siapa yang \'benar\'","Menempatkan dirimu secara fisik di antara pihak yang agresif","Mengabaikannya dan berharap itu terselesaikan sendiri"]}
+}
+};
+
+// ============================================================
+// LANG / SIDE CONTROL
+// ============================================================
+function setLang(lang, btn) {
+  LANG = lang; SIDE = false;
+  document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  var sb = document.getElementById("side-btn");
+  sb.classList.remove("active");
+  applyLang();
+}
+function toggleSide() {
+  SIDE = !SIDE;
+  var sb = document.getElementById("side-btn");
+  sb.classList.toggle("active", SIDE);
+  applyLang();
+}
+function applyLang() {
+  var body = document.body;
+  body.classList.remove("en-only","id-only","bilingual");
+  if (SIDE) { body.classList.add("bilingual"); }
+  else if (LANG === "id") { body.classList.add("id-only"); }
+  else { body.classList.add("en-only"); }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(id, clickedEl) {
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+  document.getElementById("view-"+id).classList.add("active");
+  document.querySelectorAll(".sb-btn").forEach(function(b){b.classList.remove("active");});
+  if (clickedEl && clickedEl.classList.contains("sb-btn")) clickedEl.classList.add("active");
+  closeMobileMenu();
+  window.scrollTo(0,0);
+}
+function openCat(catId, clickedEl) {
+  currentCat = catId;
+  var cat = CATS[catId];
+  var titleEl = document.getElementById("catlist-title");
+  titleEl.innerHTML = "<span class=\'en-text\'>" + cat.en + "</span><span class=\'id-text\'>" + cat.id + "</span>";
+  var container = document.getElementById("case-list-container");
+  container.innerHTML = "";
+  cat.cases.forEach(function(cid){
+    var cs = CASES[cid];
+    if (!cs) return;
+    var d = cs.en;
+    var uc = d.urgency==="high"?"b-red":d.urgency==="medium"?"b-amb":"b-gry";
+    var ul_en = d.urgency==="high"?"High priority":d.urgency==="medium"?"Attention needed":"Routine";
+    var ul_id = d.urgency==="high"?"Prioritas tinggi":d.urgency==="medium"?"Perlu perhatian":"Rutin";
+    var el = document.createElement("div");
+    el.className = "case-item";
+    el.innerHTML = "<div><div class=\'ci-title\'><span class=\'en-text\'>" + d.title + "</span><span class=\'id-text\'>" + cs.id.title + "</span></div><div class=\'ci-sub\'><span class=\'en-text\'>" + d.sub + "</span><span class=\'id-text\'>" + cs.id.sub + "</span></div></div><div class=\'ci-right\'><span class=\'badge " + uc + "\'><span class=\'en-text\'>" + ul_en + "</span><span class=\'id-text\'>" + ul_id + "</span></span><span class=\'chevron-ic\'>&#8250;</span></div>";
+    el.onclick = function(){ openCase(cid); };
+    container.appendChild(el);
+  });
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+  document.getElementById("view-catlist").classList.add("active");
+  document.querySelectorAll(".sb-btn").forEach(function(b){b.classList.remove("active");});
+  if (clickedEl && clickedEl.classList.contains("sb-btn")) clickedEl.classList.add("active");
+  closeMobileMenu();
+  window.scrollTo(0,0);
+}
+function openCase(cid) {
+  var cs = CASES[cid];
+  var en = cs.en; var id = cs.id;
+  var pr = PR[en.principle];
+  var uc = en.urgency==="high"?"b-red":en.urgency==="medium"?"b-amb":"b-gry";
+  var ul_en = en.urgency==="high"?"High priority":en.urgency==="medium"?"Attention needed":"Routine";
+  var ul_id = en.urgency==="high"?"Prioritas tinggi":en.urgency==="medium"?"Perlu perhatian":"Rutin";
+
+  function stepsHtml(enArr, idArr) {
+    var html = "";
+    enArr.forEach(function(s, i) {
+      var is = idArr[i] || {};
+      html += "<div class=\'step-row\'><div class=\'step-num\'>" + (i+1) + "</div><div><div class=\'step-action\'><span class=\'en-text\'>" + s.a + "</span><span class=\'id-text\'>" + (is.a||s.a) + "</span></div>" + (s.s ? "<div class=\'step-say\'><strong>Say / do:</strong> <span class=\'en-text\'>" + s.s + "</span>" + (is.s ? "<span class=\'id-text\'>" + is.s + "</span>" : "") + "</div>" : "") + "</div></div>";
+    });
+    return html;
+  }
+
+  var dosH = "";
+  en.dos.forEach(function(d, i){ dosH += "<li><span class=\'en-text\'>" + d + "</span><span class=\'id-text\'>" + (id.dos[i]||d) + "</span></li>"; });
+  var dontsH = "";
+  en.donts.forEach(function(d, i){ dontsH += "<li><span class=\'en-text\'>" + d + "</span><span class=\'id-text\'>" + (id.donts[i]||d) + "</span></li>"; });
+
+  var html = "<div class=\'detail-wrap\'>";
+  html += "<div class=\'detail-title\'><span class=\'en-text\'>" + en.title + "</span><span class=\'id-text\'>" + id.title + "</span></div>";
+  html += "<div class=\'detail-meta\'><span class=\'en-text\'>" + en.cat + " &nbsp;·&nbsp; " + en.sub + "</span><span class=\'id-text\'>" + id.cat + " &nbsp;·&nbsp; " + id.sub + "</span></div>";
+  html += "<div class=\'detail-badges\'><span class=\'badge " + uc + "\'><span class=\'en-text\'>" + ul_en + "</span><span class=\'id-text\'>" + ul_id + "</span></span></div>";
+  html += "<div class=\'pr-banner " + pr.cls + "\'><div><div class=\'pr-label\'>Obsidian Principle</div><div class=\'pr-title\'><span class=\'en-text\'>" + pr.en + "</span><span class=\'id-text\'>" + pr.id + "</span></div></div></div>";
+  html += "<div class=\'policy-box\'><strong><span class=\'en-text\'>Policy basis:</span><span class=\'id-text\'>Dasar kebijakan:</span></strong> <span class=\'en-text\'>" + en.policy + "</span><span class=\'id-text\'>" + id.policy + "</span></div>";
+  html += "<div class=\'scenario-box\'><span class=\'en-text\'>" + en.scenario + "</span><span class=\'id-text\'>" + id.scenario + "</span></div>";
+  html += "<div class=\'phase-tabs\'><button class=\'phase-tab active\' onclick=\'switchPhase(this,\\\"prev\\\")\'><span class=\'en-text\'>Prevention</span><span class=\'id-text\'>Pencegahan</span></button><button class=\'phase-tab\' onclick=\'switchPhase(this,\\\"hand\\\")\'><span class=\'en-text\'>Handling</span><span class=\'id-text\'>Penanganan</span></button><button class=\'phase-tab\' onclick=\'switchPhase(this,\\\"res\\\")\'><span class=\'en-text\'>Resolution</span><span class=\'id-text\'>Resolusi</span></button></div>";
+  html += "<div id=\'ph-prev\' class=\'ph-content active\'>" + stepsHtml(en.prevent, id.prevent) + "</div>";
+  html += "<div id=\'ph-hand\' class=\'ph-content\'>" + stepsHtml(en.handle, id.handle) + "</div>";
+  html += "<div id=\'ph-res\' class=\'ph-content\'>" + stepsHtml(en.resolve, id.resolve) + "</div>";
+  html += "<div class=\'esc-box\'><strong><span class=\'en-text\'>When to escalate:</span><span class=\'id-text\'>Kapan harus eskalasi:</span></strong> <span class=\'en-text\'>" + en.escalate + "</span><span class=\'id-text\'>" + id.escalate + "</span></div>";
+  html += "<div class=\'do-dont\'><div class=\'do-box\'><div class=\'dd-label\'><span class=\'en-text\'>Do</span><span class=\'id-text\'>Lakukan</span></div><ul class=\'dl\'>" + dosH + "</ul></div><div class=\'dont-box\'><div class=\'dd-label\'><span class=\'en-text\'>Don\'t</span><span class=\'id-text\'>Jangan</span></div><ul class=\'dontl\'>" + dontsH + "</ul></div></div>";
+  html += "</div>";
+
+  document.getElementById("detail-body").innerHTML = html;
+  document.getElementById("back-label-text").textContent = currentCat ? (LANG==="id" ? CATS[currentCat].id : CATS[currentCat].en) : "Back";
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+  document.getElementById("view-detail").classList.add("active");
+  window.scrollTo(0,0);
+}
+function goBackFromDetail() {
+  if (currentCat) openCat(currentCat, null);
+  else showView("home", null);
+}
+function switchPhase(el, id) {
+  el.parentNode.querySelectorAll(".phase-tab").forEach(function(t){t.classList.remove("active");});
+  el.classList.add("active");
+  ["prev","hand","res"].forEach(function(p){
+    var panel = document.getElementById("ph-"+p);
+    if (panel) panel.classList.remove("active");
+  });
+  var target = document.getElementById("ph-"+id);
+  if (target) target.classList.add("active");
+}
+function toggleMobileMenu() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("mob-overlay").classList.toggle("open");
+}
+function closeMobileMenu() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("mob-overlay").classList.remove("open");
+}
+
+// Init
+applyLang();
+</script>
+</body>
+</html>'''
+
+with open('/mnt/user-data/outputs/obsidian_frontdesk_module_v2.html', 'w', encoding='utf-8') as f:
+    f.write(HTML)
+
+print("Done! File size:", len(HTML), "chars")
+PYEOF
+
+
